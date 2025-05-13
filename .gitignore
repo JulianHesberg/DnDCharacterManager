@@ -399,3 +399,49 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+
+# Ignore Rider-specific files
+.idea/
+*.iml
+.idea/**/workspace.xml
+.idea/**/tasks.xml
+.idea/shelf/*
+.idea/dictionaries
+.idea/httpRequests/
+
+# Ignore build artifacts
+bin/
+obj/
+*.suo
+*.user
+.vs/
+
+# Ignore package dependencies
+packages/
+*.nupkg
+
+# Ignore Rider-generated files
+.idea/**/dataSources/
+.idea/**/dataSources.ids
+.idea/**/dataSources.xml
+.idea/**/dataSources.local.xml
+.idea/**/sqlDataSources.xml
+.idea/**/dynamic.xml
+.idea/**/modules.xml
+.idea/**/contentModel.xml
+
+# Ignore system files
+Thumbs.db
+Desktop.ini
+.DS_Store
+
+# Ignore logs
+logs/
+*.log
+
+# Ignore temporary files
+*.tmp
+*.bak
+
+# Ignore user-specific settings
+*.userprefs
