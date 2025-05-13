@@ -16,4 +16,4 @@ WORKDIR /app
 COPY --from=build /publish .
 
 EXPOSE 8080
-ENTRYPOINT ["dotnet", "Presentation.dll"]
+ENTRYPOINT ["dotnet", "SkillMicroservice.Presentation.dll"]
