@@ -1,5 +1,5 @@
 
-namespace SkillMicroservice.Infrastructure.Configurations;
+namespace ItemMicroservice.Infrastructure.Configurations;
 
 public class MongoDbSettings
 {

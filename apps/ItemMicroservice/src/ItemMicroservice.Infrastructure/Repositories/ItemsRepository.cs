@@ -1,10 +1,10 @@
+using ItemMicroService.Application.Interfaces;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
-using SkillMicroservice.Application.Interfaces;
-using SkillMicroservice.Domain.Entities;
-using SkillMicroservice.Infrastructure.Configurations;
+using ItemMicroservice.Domain.Entities;
+using ItemMicroservice.Infrastructure.Configurations;
 
-namespace SkillMicroservice.Infrastructure.Repositories;
+namespace ItemMicroservice.Infrastructure.Repositories;
 
 public class ItemsRepository : IItemsRepository
 {
