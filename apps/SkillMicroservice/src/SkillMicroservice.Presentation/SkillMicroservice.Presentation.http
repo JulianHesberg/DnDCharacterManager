@@ -1,0 +1,6 @@
+@SkillMicroservice.Presentation_HostAddress = http://localhost:5149
+
+GET {{SkillMicroservice.Presentation_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
