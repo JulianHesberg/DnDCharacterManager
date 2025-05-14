@@ -1,6 +1,22 @@
 version: '3.8'
 
 services:
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    hostname: rabbitmq
+    ports:
+      - "5672:5672" # AMQP client port
+      - "15672:15672" # HTTP management UI
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    healthcheck:
+      test: [ "CMD", "rabbitmq-diagnostics", "status" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
   mongo:
     image: mongo
     container_name: items-mongo
@@ -19,7 +35,8 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
     depends_on:
-      - mongo
+      rabbitmq:
+        condition: service_healthy
 
 volumes:
   mongo-data:

@@ -38,7 +38,7 @@ namespace ItemMicroservice.Presentation.Controllers
             };
 
             await _service.CreateAsync(item);
-            return CreatedAtAction(nameof(GetById), new { id = item.Id }, item);
+            return Ok(item);
         }
 
         [HttpPut("{id}")]
