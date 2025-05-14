@@ -3,14 +3,13 @@ namespace ItemMicroservice.Domain.Entities;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
-public class Items
+public class Item
 {
     [BsonId]
-    [BsonRepresentation(BsonType.ObjectId)]
-    public int Id { get; set; }
+    public string Id { get; set; }
 
     [BsonElement("price")]
-    public int Price { get; set; }
+    public decimal Price { get; set; }
 
     [BsonElement("name")]
     public string Name { get; set; } = string.Empty;
