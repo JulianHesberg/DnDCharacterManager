@@ -6,6 +6,7 @@ using MongoDB.Bson.Serialization.Attributes;
 public class Item
 {
     [BsonId]
+    [BsonRepresentation(BsonType.ObjectId)]  
     public string Id { get; set; }
 
     [BsonElement("price")]
