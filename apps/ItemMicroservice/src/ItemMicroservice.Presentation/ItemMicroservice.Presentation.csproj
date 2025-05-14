@@ -8,8 +8,14 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.0"/>
-        <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0"/>
+        <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.0" />
+        <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\ItemMicroservice.Infrastructure\ItemMicroservice.Infrastructure.csproj" />
+      <ProjectReference Include="..\ItemMicroservice.Application\ItemMicroservice.Application.csproj" />
+      <ProjectReference Include="..\ItemMicroservice.Domain\ItemMicroservice.Domain.csproj" />
     </ItemGroup>
 
 </Project>

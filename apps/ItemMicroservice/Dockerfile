@@ -1,19 +1,25 @@
-# Use .NET SDK for building
+# Stage 1: Build
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
-WORKDIR /app
+WORKDIR /src
 
-# Copy and restore dependencies
-COPY ItemMicroservice.sln ./
-COPY src/ ./src/
-RUN dotnet restore
+# Copy .csproj files
+COPY src/ItemMicroservice.Presentation/ItemMicroservice.Presentation.csproj ./ItemMicroservice.Presentation/
+COPY src/ItemMicroservice.Application/ItemMicroservice.Application.csproj ./ItemMicroservice.Application/
+COPY src/ItemMicroservice.Infrastructure/ItemMicroservice.Infrastructure.csproj ./ItemMicroservice.Infrastructure/
+COPY src/ItemMicroservice.Domain/ItemMicroservice.Domain.csproj ./ItemMicroservice.Domain/
 
-# Build and publish
-RUN dotnet publish src/ItemMicroservice.Presentation/ItemMicroservice.Presentation.csproj -c Release -o /publish
+# Restore
+RUN dotnet restore ./ItemMicroservice.Presentation/ItemMicroservice.Presentation.csproj
 
-# Use lightweight runtime image
+# Copy everything
+COPY src/ ./ 
+
+# Publish
+WORKDIR /src/ItemMicroservice.Presentation
+RUN dotnet publish -c Release -o /app/publish
+
+# Stage 2: Runtime
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
 WORKDIR /app
-COPY --from=build /publish .
-
-EXPOSE 8080
+COPY --from=build /app/publish .
 ENTRYPOINT ["dotnet", "ItemMicroservice.Presentation.dll"]
