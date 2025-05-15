@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using SkillMicroservice.Application.Dtos;
+using SkillMicroservice.Domain.Entities;
 using SkillMicroservice.Domain.Interfaces;
 
 namespace SkillMicroservice.Application
@@ -17,29 +18,78 @@ namespace SkillMicroservice.Application
             _repository = repository;
         }
 
-        public Task<SkillDto> GetSkillByIdAsync(int id)
+        public async Task<SkillDto> GetSkillByIdAsync(int id)
         {
-            throw new NotImplementedException();
+
+            var skill = await _repository.GetSkillByIdAsync(id);
+            return new SkillDto
+            {
+                Id = skill.Id,
+                Description = skill.Description,
+                Cost = skill.Cost
+            };
+           
         }
 
-        public Task<IEnumerable<SkillDto>> GetAllSkillsAsync()
+        public async Task<IEnumerable<SkillDto>> GetAllSkillsAsync()
         {
-            throw new NotImplementedException();
+            var skill = await _repository.GetAllSkillsAsync();
+            return skill.Select(s => new SkillDto
+            {
+                Id = s.Id,
+                Description = s.Description,
+                Cost = s.Cost
+            });
         }
 
-        public Task<SkillDto> CreateSkillAsync(CreateSkillDto skill)
+        public async Task<SkillDto> CreateSkillAsync(CreateSkillDto dto)
         {
-            throw new NotImplementedException();
+            var skill = new Skill
+            {
+                Description = dto.Description,
+                Cost = dto.Cost
+            };
+
+            var returnedSkill = await _repository.CreateSkillAsync(skill);
+    
+            return new SkillDto
+            {
+                Id = returnedSkill.Id,
+                Description = returnedSkill.Description,
+                Cost = returnedSkill.Cost
+            };
         }
 
-        public Task<SkillDto> UpdateSkillAsync(UpdateSkillDto skill)
+        public async Task<SkillDto> UpdateSkillAsync(UpdateSkillDto dto)
         {
-            throw new NotImplementedException();
-        }
+            var skill = new Skill
+            {
+                Description = dto.Description,
+                Cost = dto.Cost
+            };
 
-        public Task<SkillDto> DeleteSkillAsync(int id)
+            var returnedSkill = await _repository.UpdateSkillAsync(skill);
+
+            return new SkillDto
+            {
+                Id = returnedSkill.Id,
+                Description = returnedSkill.Description,
+                Cost = returnedSkill.Cost
+            };
+        }
+        
+
+        public async Task<SkillDto> DeleteSkillAsync(int id)
         {
-            throw new NotImplementedException();
+            var skill = await _repository.GetSkillByIdAsync(id);
+         
+            return new SkillDto
+            {
+                Id = skill.Id,
+                Description = skill.Description,
+                Cost = skill.Cost
+            };
+           
         }
     }
 }
