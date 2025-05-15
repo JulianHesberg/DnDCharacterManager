@@ -8,6 +8,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\..\..\..\packages\SharedLibrary\MessageBroker\MessageBroker.csproj" />
+      <ProjectReference Include="..\..\..\..\SharedLibraries\MessageBroker\MessageBroker.csproj" />
       <ProjectReference Include="..\SagaCoordinator.Infrastructure\SagaCoordinator.Infrastructure.csproj" />
     </ItemGroup>
 

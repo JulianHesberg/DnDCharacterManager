@@ -8,7 +8,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SagaCoordinator.Infrastruct
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SagaCoordinator.Presentation", "src\SagaCoordinator.Presentation\SagaCoordinator.Presentation.csproj", "{4D97C59F-4D0F-43F3-A843-A22DD1622185}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MessageBroker", "..\..\packages\SharedLibrary\MessageBroker\MessageBroker.csproj", "{AE938F38-75FB-4088-8E79-04057D59BBBF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MessageBroker", "..\..\SharedLibraries\MessageBroker\MessageBroker.csproj", "{956DA8B2-A181-41AA-A9E2-4E7F976BF2DA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -32,9 +32,9 @@ Global
 		{4D97C59F-4D0F-43F3-A843-A22DD1622185}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4D97C59F-4D0F-43F3-A843-A22DD1622185}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4D97C59F-4D0F-43F3-A843-A22DD1622185}.Release|Any CPU.Build.0 = Release|Any CPU
-		{AE938F38-75FB-4088-8E79-04057D59BBBF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{AE938F38-75FB-4088-8E79-04057D59BBBF}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{AE938F38-75FB-4088-8E79-04057D59BBBF}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{AE938F38-75FB-4088-8E79-04057D59BBBF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{956DA8B2-A181-41AA-A9E2-4E7F976BF2DA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{956DA8B2-A181-41AA-A9E2-4E7F976BF2DA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{956DA8B2-A181-41AA-A9E2-4E7F976BF2DA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{956DA8B2-A181-41AA-A9E2-4E7F976BF2DA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
