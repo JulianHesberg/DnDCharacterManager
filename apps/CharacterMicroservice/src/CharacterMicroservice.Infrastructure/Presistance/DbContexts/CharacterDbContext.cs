@@ -9,7 +9,7 @@ public class CharacterDbContext : DbContext
 
     public CharacterDbContext(DbContextOptions<CharacterDbContext> options) : base(options) { }
 
-    public DbSet<CharacterSheet> CharacterSheet { get; set; }
+    public DbSet<CharacterSheet> CharacterSheets { get; set; }
     public DbSet<CharacterItems> CharacterItems { get; set; }
     public DbSet<CharacterSkills> CharacterSkills { get; set; }
     public DbSet<CharacterNotes> CharacterNotes { get; set; }
