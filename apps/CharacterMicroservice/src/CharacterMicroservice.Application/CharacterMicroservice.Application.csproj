@@ -7,4 +7,13 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
+    <ItemGroup>
+      <Folder Include="Commands\" />
+      <Folder Include="Queries\" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\CharacterMicroservice.Domain\CharacterMicroservice.Domain.csproj" />
+    </ItemGroup>
+
 </Project>
