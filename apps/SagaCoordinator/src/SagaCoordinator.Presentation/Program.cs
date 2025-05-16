@@ -1,44 +1,25 @@
+using MessageBroker.Implementations;
+using MessageBroker.Interfaces;
+using SagaCoordinator.Application;
+using SagaCoordinator.Domain.SagaModels;
+using SagaCoordinator.Infrastructure.Implementations;
+using SagaCoordinator.Infrastructure.Interfaces;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+// Register services
+builder.Services.AddScoped<IMessageBroker>(provider =>
+    new RabbitMqMessageBroker("localhost", "guest", "guest")); // Replace with actual RabbitMQ credentials
+builder.Services.AddScoped<ISagaRepository<PurchaseItemSaga>, InMemorySagaRepository<PurchaseItemSaga>>();
+builder.Services.AddScoped<ISagaRepository<SellItemSaga>, InMemorySagaRepository<SellItemSaga>>();
+builder.Services.AddScoped<ISagaRepository<LevelUpSaga>, InMemorySagaRepository<LevelUpSaga>>();
+builder.Services.AddScoped<SagaMessageCoordinator>();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+// Resolve the SagaCoordinator and start listening
+var sagaCoordinator = app.Services.GetRequiredService<SagaMessageCoordinator>();
+sagaCoordinator.StartListening();
 
-app.UseHttpsRedirection();
-
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
-
-app.MapGet("/weatherforecast", () =>
-    {
-        var forecast = Enumerable.Range(1, 5).Select(index =>
-                new WeatherForecast
-                (
-                    DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-                    Random.Shared.Next(-20, 55),
-                    summaries[Random.Shared.Next(summaries.Length)]
-                ))
-            .ToArray();
-        return forecast;
-    })
-    .WithName("GetWeatherForecast")
-    .WithOpenApi();
 
 app.Run();
-
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}

@@ -9,5 +9,6 @@ public class Skill
 
 public class SkillListResponse
 {
+    public int CharacterId { get; set; }
     public List<Skill> Skills { get; set; }
 }

@@ -10,11 +10,13 @@ public class Item
 
 public class ItemListResponse
 {
+    public int CharacterId { get; set; }
     public List<Item> Items { get; set; }
 }
 
 public class ItemCostResponse
 {
+    public int CharacterId { get; set; }
     public string ItemId { get; set; }
     public decimal Price { get; set; }
 }
