@@ -1,5 +1,5 @@
 using MessageBroker.Interfaces;
-using SagaCoordinator.Domain.RequestModels;
+using MessageBroker.Requests;
 using SagaCoordinator.Domain.ResponseModels;
 using SagaCoordinator.Domain.SagaModels;
 using SagaCoordinator.Infrastructure.Interfaces;
@@ -126,6 +126,7 @@ public class SagaMessageCoordinator
         {
             SagaId = new Guid(),
             CharacterId = request.CharacterId,
+            Level = request.Level,
             State = SagaState.Initialized
         };
         _levelUpSagaRepository.Save(levelUpSaga);

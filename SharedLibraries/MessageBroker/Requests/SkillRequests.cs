@@ -1,4 +1,4 @@
-namespace SagaCoordinator.Domain.RequestModels;
+namespace MessageBroker.Requests;
 
 public class LevelUpRequest
 {
