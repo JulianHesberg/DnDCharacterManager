@@ -10,27 +10,27 @@ namespace SkillMicroservice.Infrastructure.Repositories
 {
     public class SkillRepository : ISkillRepository
     {
-        public Task<Skill> GetSkillByIdAsync(int id)
+        public async Task<Skill> GetSkillByIdAsync(int id)
         {
             throw new NotImplementedException();
         }
 
-        public Task<IEnumerable<Skill>> GetAllSkillsAsync()
+        public async Task<IEnumerable<Skill>> GetAllSkillsAsync()
         {
             throw new NotImplementedException();
         }
 
-        public Task<Skill> AddSkillAsync(Skill skill)
+        public async Task<Skill> CreateSkillAsync(Skill skill)
         {
             throw new NotImplementedException();
         }
 
-        public Task<Skill> UpdateSkillAsync(Skill skill)
+        public async Task<Skill> UpdateSkillAsync(Skill skill)
         {
             throw new NotImplementedException();
         }
 
-        public Task<bool> DeleteSkillAsync(int id)
+        public async Task<Skill> DeleteSkillAsync(int id)
         {
             throw new NotImplementedException();
         }
