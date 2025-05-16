@@ -7,7 +7,7 @@ public interface ICharacterSheetRepository
 
     Task<CharacterSheet> GetCharacterByIdAsync(int id);
     Task AddAsync(CharacterSheet character);
-    Task UpdateAsync(CharacterSheet character);
-    Task DeleteAsync(CharacterSheet character);
+    Task Update(CharacterSheet character);
+    Task Remove(CharacterSheet character);
 
 }

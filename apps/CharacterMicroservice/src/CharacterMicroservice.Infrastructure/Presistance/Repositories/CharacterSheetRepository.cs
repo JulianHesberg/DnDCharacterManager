@@ -45,7 +45,7 @@ public class CharacterSheetRepository : ICharacterSheetRepository
         }
     }
 
-    public Task UpdateAsync(CharacterSheet character)
+    public Task Update(CharacterSheet character)
     {
         try
         {
@@ -58,7 +58,7 @@ public class CharacterSheetRepository : ICharacterSheetRepository
         }
     }
 
-    public Task DeleteAsync(CharacterSheet character)
+    public Task Remove(CharacterSheet character)
     {
         try
         {
