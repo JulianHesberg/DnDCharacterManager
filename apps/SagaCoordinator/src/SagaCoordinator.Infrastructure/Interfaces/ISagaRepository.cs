@@ -6,5 +6,5 @@ public interface ISagaRepository<TSaga> where TSaga : ISaga
 {
     void Save(TSaga saga);
     void Update(TSaga saga);
-    TSaga FindById(int sagaId);
+    TSaga FindById(Guid sagaId);
 }

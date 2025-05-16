@@ -6,18 +6,18 @@ namespace SagaCoordinator.Infrastructure.Implementations;
 
 public class InMemorySagaRepository<TSaga> : ISagaRepository<TSaga> where TSaga : ISaga
 {
-    private readonly ConcurrentDictionary<int, TSaga> _sagas = new();
+    private readonly ConcurrentDictionary<Guid, TSaga> _sagas = new();
     
     public void Save(TSaga saga)
     {
-        _sagas[saga.CharacterId] = saga;
+        _sagas[saga.SagaId] = saga;
     }
 
     public void Update(TSaga saga)
     {
-        if(_sagas.ContainsKey(saga.CharacterId))
+        if(_sagas.ContainsKey(saga.SagaId))
         {
-            _sagas[saga.CharacterId] = saga;
+            _sagas[saga.SagaId] = saga;
         }
         else
         {
@@ -25,7 +25,7 @@ public class InMemorySagaRepository<TSaga> : ISagaRepository<TSaga> where TSaga 
         }
     }
 
-    public TSaga FindById(int sagaId)
+    public TSaga FindById(Guid sagaId)
     {
         _sagas.TryGetValue(sagaId, out var saga);  
         return saga;  
