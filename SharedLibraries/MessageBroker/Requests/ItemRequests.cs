@@ -19,3 +19,10 @@ public class CraftItemRequest
     public string Name { get; set; }
     public string Description { get; set; }
 }
+
+// Rollback
+public class RollbackItemCraftedRequest
+{
+    public Guid SagaId { get; set; }
+    public string ItemId { get; set; }
+}
