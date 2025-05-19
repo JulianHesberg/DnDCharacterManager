@@ -4,18 +4,18 @@ using MediatR;
 
 namespace CharacterMicroservice.Application.Commands.CharacterNotesCommands;
 
-public record CreateSkillNoteCommand(CharacterNotes Note) : IRequest<Unit>;
+public record CreateCharacterNoteCommand(CharacterNotes Note) : IRequest<Unit>;
 
-public class CreateSkillNoteCommandHandler : IRequestHandler<CreateSkillNoteCommand, Unit>
+public class CreateCharacterNoteCommandHandler : IRequestHandler<CreateCharacterNoteCommand, Unit>
 {
     private readonly IUnitOfWork _uow;
 
-    public CreateSkillNoteCommandHandler(IUnitOfWork uow)
+    public CreateCharacterNoteCommandHandler(IUnitOfWork uow)
     {
         _uow = uow;
     }
 
-    public async Task<Unit> Handle(CreateSkillNoteCommand request, CancellationToken cancellationToken)
+    public async Task<Unit> Handle(CreateCharacterNoteCommand request, CancellationToken cancellationToken)
     {
         await _uow.CharacterNotes.AddAsync(request.Note);
         await _uow.SaveChangesAsync(cancellationToken);

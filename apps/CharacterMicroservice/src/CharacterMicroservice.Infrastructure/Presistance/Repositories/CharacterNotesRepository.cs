@@ -6,11 +6,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CharacterMicroservice.Infrastructure.Presistance.Repositories;
 
-public class CharactNotesRepository : ICharacterNotesRepository
+public class CharacterNotesRepository : ICharacterNotesRepository
 {
     private readonly CharacterDbContext _context;
 
-    public CharactNotesRepository(CharacterDbContext context)
+    public CharacterNotesRepository(CharacterDbContext context)
     {
         _context = context;
     }

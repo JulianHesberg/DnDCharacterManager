@@ -8,10 +8,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <Folder Include="Mongo\" />
-    </ItemGroup>
-
-    <ItemGroup>
       <ProjectReference Include="..\CharacterMicroservice.Application\CharacterMicroservice.Application.csproj" />
     </ItemGroup>
 
@@ -21,6 +17,7 @@
 
     <ItemGroup>
       <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.5" />
+      <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="9.0.5" />
     </ItemGroup>
 
 </Project>

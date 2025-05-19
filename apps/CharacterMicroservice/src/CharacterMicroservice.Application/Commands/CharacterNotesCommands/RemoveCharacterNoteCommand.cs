@@ -4,18 +4,18 @@ using MediatR;
 
 namespace CharacterMicroservice.Application.Commands.CharacterNotesCommands;
 
-public record RemoveSkillNoteCommand(CharacterNotes Note) : IRequest<Unit>;
+public record RemoveCharacterNoteCommand(CharacterNotes Note) : IRequest<Unit>;
 
-public class RemoveSkillNoteCommandHandler : IRequestHandler<RemoveSkillNoteCommand, Unit>
+public class RemoveCharacterNoteCommandHandler : IRequestHandler<RemoveCharacterNoteCommand, Unit>
 {
     private readonly IUnitOfWork _uow;
 
-    public RemoveSkillNoteCommandHandler(IUnitOfWork uow)
+    public RemoveCharacterNoteCommandHandler(IUnitOfWork uow)
     {
         _uow = uow;
     }
 
-    public async Task<Unit> Handle(RemoveSkillNoteCommand request, CancellationToken cancellationToken)
+    public async Task<Unit> Handle(RemoveCharacterNoteCommand request, CancellationToken cancellationToken)
     {
         _uow.CharacterNotes.Remove(request.Note);
         await _uow.SaveChangesAsync(cancellationToken);
