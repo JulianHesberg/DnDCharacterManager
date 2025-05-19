@@ -1,4 +1,5 @@
 using CharacterMicroservice.Application.Interfaces.IRepositories;
+using CharacterMicroservice.Application.Interfaces.IRepositories.ReadRepositories;
 using CharacterMicroservice.Application.Interfaces.UnitOfWork;
 using CharacterMicroservice.Infrastructure.Presistance;
 using CharacterMicroservice.Infrastructure.Presistance.Mongo;

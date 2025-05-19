@@ -1,4 +1,4 @@
-using CharacterMicroservice.Application.Interfaces.IRepositories;
+using CharacterMicroservice.Application.Interfaces.IRepositories.ReadRepositories;
 using CharacterMicroservice.Domain.Models.Entity.Read;
 using MediatR;
 

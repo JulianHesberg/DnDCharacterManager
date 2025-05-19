@@ -21,4 +21,4 @@ public class RemoveCharacterNoteCommandHandler : IRequestHandler<RemoveCharacter
         await _uow.SaveChangesAsync(cancellationToken);
         return Unit.Value;
     }
-}
+}   

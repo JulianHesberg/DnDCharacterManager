@@ -1,5 +1,5 @@
 using System;
-using CharacterMicroservice.Application.Interfaces.IRepositories;
+using CharacterMicroservice.Application.Interfaces.IRepositories.ReadRepositories;
 using CharacterMicroservice.Domain.Models.Entity.Read;
 using MongoDB.Driver;
 
@@ -24,4 +24,19 @@ public class CharacterReadRepository : ICharacterReadRepository
         var filter = Builders<CharacterRead>.Filter.Eq(c => c.CharacterId, characterId);
         return await _collection.Find(filter).FirstOrDefaultAsync();
     }
+
+    public async Task UpsertAsync(CharacterRead character)
+    {
+        var filter = Builders<CharacterRead>.Filter.Eq(c => c.CharacterId, character.CharacterId);
+        await _collection.ReplaceOneAsync(
+            filter,
+            character,
+            new ReplaceOptions { IsUpsert = true });
+    }
+    public async Task DeleteAsync(int characterId)
+    {
+        var filter = Builders<CharacterRead>.Filter.Eq(c => c.CharacterId, characterId);
+        await _collection.DeleteOneAsync(filter);
+    }
+
 }

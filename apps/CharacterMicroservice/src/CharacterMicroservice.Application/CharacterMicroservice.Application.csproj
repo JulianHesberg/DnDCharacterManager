@@ -8,10 +8,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <Folder Include="Interfaces\IRepositories\ReadRepositories\" />
-    </ItemGroup>
-
-    <ItemGroup>
       <ProjectReference Include="..\CharacterMicroservice.Domain\CharacterMicroservice.Domain.csproj" />
     </ItemGroup>
 

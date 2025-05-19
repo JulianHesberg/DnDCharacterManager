@@ -20,5 +20,5 @@ public class CharacterSheet
     public ICollection<CharacterItems> Items { get; set; }
     public ICollection<CharacterSkills> Skills { get; set; }
     public ICollection<CharacterNotes> Notes { get; set; }
-
+    public int CharacterId { get; set; }
 }
