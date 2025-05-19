@@ -48,7 +48,7 @@ public class SagaMessageCoordinator
         _messageBroker.Subscribe<RequestFailed>(QueueNames.CompensationQueue, HandleRequestFailed);
     }
     
-    private void HandleCraftItemRequest(CraftItemRequest request)
+    private async Task HandleCraftItemRequest(CraftItemRequest request)
     {
         var craftSaga = new CraftItemSaga
         {
@@ -60,10 +60,10 @@ public class SagaMessageCoordinator
             State = SagaState.Initialized
         };
         _craftItemSagaRepository.Save(craftSaga);
-        _messageBroker.Publish(QueueNames.ItemServiceQueue, request);
+        await _messageBroker.Publish(QueueNames.ItemServiceQueue, request);
     }
     
-    private void HandleItemCraftedResponse(ItemCraftedResponse response)
+    private async Task HandleItemCraftedResponse(ItemCraftedResponse response)
     {
         var craftSaga = _craftItemSagaRepository.FindById(response.SagaId);
         if(craftSaga != null)
@@ -71,11 +71,11 @@ public class SagaMessageCoordinator
             craftSaga.ItemId = response.ItemId;
             craftSaga.State = SagaState.InProgress;
             _craftItemSagaRepository.Update(craftSaga);
-            _messageBroker.Publish(QueueNames.CharacterServiceQueue, response);
+            await _messageBroker.Publish(QueueNames.CharacterServiceQueue, response);
         }
     }
     
-    private void HandlePurchaseItemRequest(PurchaseItemRequest request)
+    private async Task HandlePurchaseItemRequest(PurchaseItemRequest request)
     {
         var purchaseSaga = new PurchaseItemSaga
         {
@@ -85,21 +85,21 @@ public class SagaMessageCoordinator
             State = SagaState.Initialized
         };
         _purchaseItemSagaRepository.Save(purchaseSaga);
-        _messageBroker.Publish(QueueNames.ItemServiceQueue, request);
+        await _messageBroker.Publish(QueueNames.ItemServiceQueue, request);
     }
 
-    private void HandleItemListResponse(ItemListResponse response)
+    private async Task HandleItemListResponse(ItemListResponse response)
     {
         var purchaseSaga = _purchaseItemSagaRepository.FindById(response.SagaId);
         if(purchaseSaga != null)
         {
             purchaseSaga.State = SagaState.InProgress;
             _purchaseItemSagaRepository.Update(purchaseSaga);
-            _messageBroker.Publish(QueueNames.CharacterServiceQueue, response);
+           await _messageBroker.Publish(QueueNames.CharacterServiceQueue, response);
         }
     }
     
-    private void HandleSellItemRequest(SellItemRequest request)
+    private async Task HandleSellItemRequest(SellItemRequest request)
     {
         var sellSaga = new SellItemSaga
         {
@@ -109,21 +109,21 @@ public class SagaMessageCoordinator
             State = SagaState.Initialized
         };
         _sellItemSagaRepository.Save(sellSaga);
-        _messageBroker.Publish(QueueNames.ItemServiceQueue, request);
+        await _messageBroker.Publish(QueueNames.ItemServiceQueue, request);
     }
 
-    private void HandleItemCostResponse(ItemCostResponse response)
+    private async Task HandleItemCostResponse(ItemCostResponse response)
     {
         var sellSaga = _sellItemSagaRepository.FindById(response.SagaId);
         if(sellSaga != null)
         {
             sellSaga.State = SagaState.InProgress;
             _sellItemSagaRepository.Update(sellSaga);
-            _messageBroker.Publish(QueueNames.CharacterServiceQueue, response);
+            await _messageBroker.Publish(QueueNames.CharacterServiceQueue, response);
         }
     }
     
-    private void HandleLevelUpRequest(LevelUpRequest request)
+    private async Task HandleLevelUpRequest(LevelUpRequest request)
     {
         var levelUpSaga = new LevelUpSaga
         {
@@ -133,21 +133,21 @@ public class SagaMessageCoordinator
             State = SagaState.Initialized
         };
         _levelUpSagaRepository.Save(levelUpSaga);
-        _messageBroker.Publish(QueueNames.SkillServiceQueue, request);
+        await _messageBroker.Publish(QueueNames.SkillServiceQueue, request);
     }
     
-    private void HandleSkillListResponse(SkillListResponse response)
+    private async Task HandleSkillListResponse(SkillListResponse response)
     {
         var levelUpSaga = _levelUpSagaRepository.FindById(response.SagaId);
         if(levelUpSaga != null)
         {
             levelUpSaga.State = SagaState.InProgress;
             _levelUpSagaRepository.Update(levelUpSaga);
-            _messageBroker.Publish(QueueNames.CharacterServiceQueue, response);
+            await _messageBroker.Publish(QueueNames.CharacterServiceQueue, response);
         }
     }
 
-    private void HandleAcknowledgeResponse(AcknowledgeResponse response)
+    private async Task HandleAcknowledgeResponse(AcknowledgeResponse response)
     {
         // Acknowledge Item Purchase
         var purchaseSaga = _purchaseItemSagaRepository.FindById(response.SagaId);
@@ -185,7 +185,7 @@ public class SagaMessageCoordinator
         }
     }
 
-    private void HandleRequestFailed(RequestFailed response)
+    private async Task HandleRequestFailed(RequestFailed response)
     {
         var itemSaga = _craftItemSagaRepository.FindById(response.SagaId);
         if(itemSaga != null)
@@ -197,7 +197,7 @@ public class SagaMessageCoordinator
                 SagaId = itemSaga.SagaId,
                 ItemId = itemSaga.ItemId
             };
-            _messageBroker.Publish(QueueNames.CompensationQueue, rollback);
+            await _messageBroker.Publish(QueueNames.CompensationQueue, rollback);
             return;
         }
         
@@ -212,7 +212,7 @@ public class SagaMessageCoordinator
                 CharacterId = purchaseSaga.CharacterId,
                 ErrorMessage = response.ErrorMessage
             };
-            _messageBroker.Publish(QueueNames.CompensationQueue, errorMessage);
+            await _messageBroker.Publish(QueueNames.CompensationQueue, errorMessage);
         }
         
         var sellSaga = _sellItemSagaRepository.FindById(response.SagaId);
@@ -226,7 +226,7 @@ public class SagaMessageCoordinator
                 CharacterId = sellSaga.CharacterId,
                 ErrorMessage = response.ErrorMessage
             };
-            _messageBroker.Publish(QueueNames.CompensationQueue, errorMessage);
+            await _messageBroker.Publish(QueueNames.CompensationQueue, errorMessage);
         }
         
         var levelUpSaga = _levelUpSagaRepository.FindById(response.SagaId);
@@ -240,7 +240,7 @@ public class SagaMessageCoordinator
                 CharacterId = levelUpSaga.CharacterId,
                 ErrorMessage = response.ErrorMessage
             };
-            _messageBroker.Publish(QueueNames.CompensationQueue, errorMessage);
+            await _messageBroker.Publish(QueueNames.CompensationQueue, errorMessage);
         }
     }
     
