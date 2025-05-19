@@ -1,13 +1,19 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <ItemGroup>
+        <ProjectReference Include="..\..\..\..\SharedLibraries\MessageBroker\MessageBroker.csproj" />
         <ProjectReference Include="..\ItemMicroservice.Application\ItemMicroservice.Application.csproj" />
         <ProjectReference Include="..\ItemMicroservice.Domain\ItemMicroservice.Domain.csproj" />
     </ItemGroup>
 
     <ItemGroup>
+        <PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.5" />
         <PackageReference Include="Microsoft.Extensions.Options" Version="9.0.5" />
-        <PackageReference Include="RabbitMq.Client" Version="7.1.2" />
+        <PackageReference Include="RabbitMq.Client" Version="6.8.1" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Messaging\" />
     </ItemGroup>
 
     <PropertyGroup>

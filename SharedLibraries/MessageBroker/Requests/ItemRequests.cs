@@ -27,5 +27,6 @@ public class CraftItemRequest
 public class RollbackItemCraftedRequest
 {
     public Guid SagaId { get; set; }
+    public int CharacterId { get; set; }
     public string ItemId { get; set; }
 }

@@ -10,7 +10,14 @@ public class AcknowledgeResponse
 public class RequestFailed
 {
     public Guid SagaId { get; set; }
+    public int CharacterId { get; set; }
     public string ErrorMessage { get; set; }
+}
+
+public class RollbackCompleted
+{
+    public Guid SagaId { get; set; }
+    public int CharacterId { get; set; }
 }
 
 public class NotifyFailureToCharacter

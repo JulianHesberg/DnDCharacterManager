@@ -46,6 +46,8 @@ public class SagaMessageCoordinator
         _messageBroker.Subscribe<AcknowledgeResponse>(QueueNames.CharacterServiceQueue, HandleAcknowledgeResponse); 
         
         _messageBroker.Subscribe<RequestFailed>(QueueNames.CompensationQueue, HandleRequestFailed);
+        
+        _messageBroker.Subscribe<RollbackCompleted>(QueueNames.CompensationQueue, HandleRollbackCompleted);
     }
     
     private async Task HandleCraftItemRequest(CraftItemRequest request)
@@ -190,11 +192,12 @@ public class SagaMessageCoordinator
         var itemSaga = _craftItemSagaRepository.FindById(response.SagaId);
         if(itemSaga != null)
         {
-            itemSaga.State = SagaState.Failed;
+            itemSaga.State = SagaState.InProgress;
             _craftItemSagaRepository.Update(itemSaga);
             var rollback = new RollbackItemCraftedRequest
             {
                 SagaId = itemSaga.SagaId,
+                CharacterId = response.CharacterId,
                 ItemId = itemSaga.ItemId
             };
             await _messageBroker.Publish(QueueNames.CompensationQueue, rollback);
@@ -243,5 +246,14 @@ public class SagaMessageCoordinator
             await _messageBroker.Publish(QueueNames.CompensationQueue, errorMessage);
         }
     }
-    
+
+    private async Task HandleRollbackCompleted(RollbackCompleted response)
+    {
+        var craftedSaga = _craftItemSagaRepository.FindById(response.SagaId);
+        if (craftedSaga.SagaId != null)
+        {
+            craftedSaga.State = SagaState.Failed;
+            _craftItemSagaRepository.Update(craftedSaga);
+        }
+    }
 }
