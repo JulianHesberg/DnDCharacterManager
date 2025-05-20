@@ -1,6 +1,6 @@
 using System;
 using CharacterMicroservice.Application.Interfaces.IRepositories.ReadRepositories;
-using CharacterMicroservice.Domain.Models.Entity.Read;
+using CharacterMicroservice.Application.ReadModels;
 using MongoDB.Driver;
 
 namespace CharacterMicroservice.Infrastructure.Presistance.Mongo;
@@ -14,29 +14,39 @@ public class CharacterReadRepository : ICharacterReadRepository
         _collection = context.GetCollection<CharacterRead>("characters");
     }
 
-    public async Task<List<CharacterRead>> GetAllAsync()
+    public async Task<List<CharacterRead>> GetAllAsync(CancellationToken ct = default)
     {
-        return await _collection.Find(Builders<CharacterRead>.Filter.Empty).ToListAsync();
+        return await _collection
+    .Find(FilterDefinition<CharacterRead>.Empty)
+    .ToListAsync(ct);
+
     }
 
-    public async Task<CharacterRead> GetCharacterByIdAsync(int characterId)
+    public async Task<CharacterRead> GetCharacterByIdAsync(int characterId, CancellationToken ct = default)
     {
-        var filter = Builders<CharacterRead>.Filter.Eq(c => c.CharacterId, characterId);
-        return await _collection.Find(filter).FirstOrDefaultAsync();
+        var filter = Builders<CharacterRead>
+            .Filter.Eq(c => c.CharacterId, characterId);
+        return await _collection
+            .Find(filter)
+            .FirstOrDefaultAsync(ct);
     }
 
-    public async Task UpsertAsync(CharacterRead character)
+    public Task Upsert(CharacterRead character, CancellationToken ct = default)
     {
-        var filter = Builders<CharacterRead>.Filter.Eq(c => c.CharacterId, character.CharacterId);
-        await _collection.ReplaceOneAsync(
-            filter,
-            character,
-            new ReplaceOptions { IsUpsert = true });
+        var filter = Builders<CharacterRead>
+            .Filter.Eq(c => c.CharacterId, character.CharacterId);
+
+        return _collection.ReplaceOneAsync(
+            filter: filter,
+            replacement: character,
+            options: new ReplaceOptions { IsUpsert = true },
+            cancellationToken: ct);
     }
-    public async Task DeleteAsync(int characterId)
+    public Task Delete(int characterId, CancellationToken ct = default)
     {
-        var filter = Builders<CharacterRead>.Filter.Eq(c => c.CharacterId, characterId);
-        await _collection.DeleteOneAsync(filter);
+        var filter = Builders<CharacterRead>
+            .Filter.Eq(c => c.CharacterId, characterId);
+        return _collection.DeleteOneAsync(filter, ct);
     }
 
 }

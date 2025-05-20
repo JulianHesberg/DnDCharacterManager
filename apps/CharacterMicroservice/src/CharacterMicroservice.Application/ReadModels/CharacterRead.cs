@@ -1,7 +1,7 @@
 using System;
 using MongoDB.Bson.Serialization.Attributes;
 
-namespace CharacterMicroservice.Domain.Models.Entity.Read;
+namespace CharacterMicroservice.Application.ReadModels;
 
 public class CharacterRead
 {
