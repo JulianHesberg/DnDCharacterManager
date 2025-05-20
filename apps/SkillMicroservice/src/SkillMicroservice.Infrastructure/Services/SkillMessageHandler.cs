@@ -1,5 +1,7 @@
 using MessageBroker.Interfaces;
+using MessageBroker.Requests;
 using SkillMicroservice.Domain.Interfaces;
+using MessageBroker;
 
 namespace SkillMicroservice.Infrastructure.Services;
 
@@ -14,8 +16,29 @@ public class SkillMessageHandler : IMessageHandler
         _messageBroker = messageBroker;
     }
 
-    public Task HandleMessageAsync<T>(T message)
+    public async Task HandleMessageAsync<T>(T message)
     {
-        throw new NotImplementedException();
+        switch (message)
+        {
+            case LevelUpRequest request:
+                await HandleLevelUpRequest(request);
+                break;
+                
+            default:
+                throw new NotImplementedException($"Message type {typeof(T).Name} is not implemented.");
+        }
+    }
+
+    private async Task HandleLevelUpRequest(LevelUpRequest request)
+    {
+        var skills = await _repository.GetSkillsByLevelAsync(request.Level);
+
+        await _messageBroker.Publish(QueueNames.SkillServiceQueue, new SkillListResponse
+        {
+            SagaId = request.SagaId,
+            CharacterId = request.CharacterId,
+            Skills = skills
+        });
+        
     }
 }
