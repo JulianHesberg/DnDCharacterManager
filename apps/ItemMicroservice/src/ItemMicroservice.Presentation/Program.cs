@@ -1,10 +1,12 @@
-using ItemMicroservice.Application.Interfaces;
 using ItemMicroservice.Application.Service;
 using ItemMicroservice.Application.Service.Interfaces;
 using ItemMicroservice.Infrastructure.Configurations;
 using ItemMicroservice.Infrastructure.Repositories;
 using ItemMicroService.Application.Interfaces;
-using ItemMicroService.Infrastructure.Configurations;
+using ItemMicroservice.Infrastructure.Services;
+using MessageBroker.Configuration;
+using MessageBroker.Implementations;
+using MessageBroker.Interfaces;
 using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -13,26 +15,17 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.Configure<MongoDbSettings>(
     builder.Configuration.GetSection("MongoDbSettings"));
 
-// 1) Bind your RabbitMQSettings from appsettings.json
 builder.Services.Configure<RabbitMQSettings>(
-    builder.Configuration.GetSection("RabbitMQ"));
+    builder.Configuration.GetSection("RabbitMQSettings"));
 
-// 2) Pull the plain POCO out of IConfiguration
-var rabbitConfig = builder.Configuration
-    .GetSection("RabbitMQ")
-    .Get<RabbitMQSettings>()!;
-
-// 3) Wrap it in an IOptions<RabbitMQSettings>
-var rabbitOptions = Options.Create(rabbitConfig);
-
-// 4) Await the async factory to get a fully ready publisher
-var rabbitPublisher = await RabbitMQPublisher.CreateAsync(rabbitOptions);
-
-// 5) Register it in DI via the factory‐overload so there’s no overload conflict
-builder.Services.AddSingleton<IRabbitMQPublisher>(_ => rabbitPublisher);
 
 builder.Services.AddScoped<IItemRepository, ItemRepository>();
 builder.Services.AddScoped<IItemService, ItemService>();
+
+builder.Services.AddSingleton<IMessageBroker, RabbitMqMessageBroker>();
+builder.Services.AddSingleton<IMessageHandler, ItemMessageHandler>();
+
+builder.Services.AddHostedService<RabbitMQListener>();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
