@@ -3,6 +3,7 @@
     <ItemGroup>
       <ProjectReference Include="..\SkillMicroservice.Application\SkillMicroservice.Application.csproj" />
       <ProjectReference Include="..\SkillMicroservice.Domain\SkillMicroservice.Domain.csproj" />
+      <ProjectReference Include="..\..\..\..\SharedLibraries\MessageBroker\MessageBroker.csproj" />
     </ItemGroup>
 
     <ItemGroup>
