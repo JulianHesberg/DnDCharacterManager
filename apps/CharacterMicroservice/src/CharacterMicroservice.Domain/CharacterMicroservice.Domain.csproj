@@ -8,7 +8,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <Folder Include="Models\ValueObjects\" />
+      <PackageReference Include="MongoDB.Driver" Version="3.4.0" />
     </ItemGroup>
 
 </Project>
