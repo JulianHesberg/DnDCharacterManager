@@ -4,7 +4,7 @@ using CharacterMicroservice.Application.Commands.CharacterNotesCommands;
 using CharacterMicroservice.Application.Commands.CharacterSheetCommands;
 using CharacterMicroservice.Application.Commands.CharacterSkillsCommands;
 using CharacterMicroservice.Application.Queries;
-using CharacterMicroservice.Domain.Models.Entity.Read;
+using CharacterMicroservice.Application.ReadModels;
 using CharacterMicroservice.Domain.Models.Entity.Write;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
