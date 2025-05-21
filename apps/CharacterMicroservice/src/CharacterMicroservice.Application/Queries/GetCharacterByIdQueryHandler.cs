@@ -1,5 +1,5 @@
 using CharacterMicroservice.Application.Interfaces.IRepositories.ReadRepositories;
-using CharacterMicroservice.Domain.Models.Entity.Read;
+using CharacterMicroservice.Application.ReadModels;
 using MediatR;
 
 namespace CharacterMicroservice.Application.Queries;
@@ -11,7 +11,7 @@ public class GetCharacterByIdQueryHandler : IRequestHandler<GetCharacterByIdQuer
 {
     private readonly ICharacterReadRepository _repository;
 
-    public GetCharacterByIdQueryHandler(ICharacterReadRepository repository)
+    public GetCharacterByIdQueryHandler(ICharacterReadRepository repository, CancellationToken cancellationToken)
     {
         _repository = repository;
     }
@@ -20,6 +20,6 @@ public class GetCharacterByIdQueryHandler : IRequestHandler<GetCharacterByIdQuer
         GetCharacterByIdQuery request,
         CancellationToken cancellationToken)
     {
-        return await _repository.GetCharacterByIdAsync(request.CharacterId);
+        return await _repository.GetCharacterByIdAsync(request.CharacterId, cancellationToken);
     }
 }

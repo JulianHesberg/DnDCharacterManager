@@ -1,6 +1,6 @@
 using System;
 using CharacterMicroservice.Application.Interfaces.IRepositories.ReadRepositories;
-using CharacterMicroservice.Domain.Models.Entity.Read;
+using CharacterMicroservice.Application.ReadModels;
 using MediatR;
 
 namespace CharacterMicroservice.Application.Queries;
@@ -12,7 +12,7 @@ public class GetAllCharactersQueryHandler : IRequestHandler<GetAllCharactersQuer
 {
     private readonly ICharacterReadRepository _repository;
 
-    public GetAllCharactersQueryHandler(ICharacterReadRepository repository)
+    public GetAllCharactersQueryHandler(ICharacterReadRepository repository, CancellationToken cancellationToken)
     {
         _repository = repository;
     }
@@ -21,6 +21,6 @@ public class GetAllCharactersQueryHandler : IRequestHandler<GetAllCharactersQuer
         GetAllCharactersQuery request,
         CancellationToken cancellationToken)
     {
-        return await _repository.GetAllAsync();
+        return await _repository.GetAllAsync(cancellationToken);
     }
 }
