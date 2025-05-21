@@ -18,30 +18,39 @@ public class RabbitMqMessageBroker : IMessageBroker
         _channel = _connection.CreateModel();
     }
     
-    public void Publish<T>(string queueName, T message)
+    public async Task Publish<T>(string queueName, T message)
     {
-        _channel.QueueDeclare(queue: queueName, durable: false, exclusive: false, autoDelete: false, arguments: null);  
-        var jsonMessage = JsonSerializer.Serialize(message);  
-        var body = Encoding.UTF8.GetBytes(jsonMessage);  
-  
-        _channel.BasicPublish(exchange: "", routingKey: queueName, basicProperties: null, body: body);  
+        await Task.Run(() =>
+        {
+            _channel.QueueDeclare(queue: queueName, durable: false, exclusive: false, autoDelete: false, arguments: null);
+            var jsonMessage = JsonSerializer.Serialize(message);
+            var body = Encoding.UTF8.GetBytes(jsonMessage);
+
+            _channel.BasicPublish(exchange: "", routingKey: queueName, basicProperties: null, body: body);
+        });
     }
 
-    public void Subscribe<T>(string queueName, Action<T> onMessageRecieved)
+    public async Task Subscribe<T>(string queueName, Func<T, Task> onMessageReceived)
     {
-        _channel.QueueDeclare(queue: queueName, durable: false, exclusive: false, autoDelete: false, arguments: null);  
-        var consumer = new EventingBasicConsumer(_channel);  
-              
-        consumer.Received += (model, ea) =>  
-        {  
-            var body = ea.Body.ToArray();  
-            var jsonMessage = Encoding.UTF8.GetString(body);  
-            var message = JsonSerializer.Deserialize<T>(jsonMessage);  
-                  
-            onMessageRecieved(message);  
-        };  
-              
-        _channel.BasicConsume(queue: queueName, autoAck: true, consumer: consumer);  
+        await Task.Run(() =>
+        {
+            _channel.QueueDeclare(queue: queueName, durable: false, exclusive: false, autoDelete: false, arguments: null);
+            var consumer = new EventingBasicConsumer(_channel);
+
+            consumer.Received += async (model, ea) =>
+            {
+                var body = ea.Body.ToArray();
+                var jsonMessage = Encoding.UTF8.GetString(body);
+                var message = JsonSerializer.Deserialize<T>(jsonMessage);
+
+                if (message != null)
+                {
+                    await onMessageReceived(message);
+                }
+            };
+
+            _channel.BasicConsume(queue: queueName, autoAck: true, consumer: consumer);
+        });
     }
     
     public void Dispose()  

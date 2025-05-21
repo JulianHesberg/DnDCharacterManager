@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 using CharacterMicroservice.Application.Interfaces.IRepositories;
 using CharacterMicroservice.Application.Interfaces.IRepositories.ReadRepositories;
 using CharacterMicroservice.Application.Interfaces.UnitOfWork;
@@ -15,8 +16,17 @@ using CharacterMicroservice.Application.Commands.CharacterNotesCommands;
 using CharacterMicroservice.Infrastructure.Presistance.Mongo.EventHandlers.Items;
 using CharacterMicroservice.Infrastructure.Presistance.Mongo.EventHandlers.Skills;
 using CharacterMicroservice.Infrastructure.Presistance.Mongo.EventHandlers.Notes;
+using CharacterMicroservice.Infrastructure.Configurations;
+using MessageBroker.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.Configure<MongoDbSettings>(
+    builder.Configuration.GetSection("MongoDbSettings"));
+
+builder.Services.Configure<RabbitMQSettings>(
+    builder.Configuration.GetSection("RabbitMQSettings"));
+
 
 builder.Services.AddScoped<ICharacterSheetRepository, CharacterSheetRepository>();
 builder.Services.AddScoped<ICharacterItemsRepository, CharacterItemsRepository>();
@@ -63,6 +73,7 @@ builder.Services.AddTransient(
 );
 
 builder.Services.AddControllers();
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 

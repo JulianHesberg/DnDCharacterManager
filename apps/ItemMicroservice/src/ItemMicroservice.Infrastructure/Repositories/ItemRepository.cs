@@ -28,9 +28,10 @@ public class ItemRepository : IItemRepository
         return await _items.Find(i => i.Id == id).FirstOrDefaultAsync();
     }
 
-    public async Task CreateAsync(Item item)
+    public async Task<Item> CreateAsync(Item item)
     {
-        await _items.InsertOneAsync(item);
+         await _items.InsertOneAsync(item);
+         return item;
     }
     public async Task UpdateAsync(Item item)
     {

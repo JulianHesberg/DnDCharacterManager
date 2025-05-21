@@ -18,4 +18,9 @@
       <ProjectReference Include="..\CharacterMicroservice.Infrastructure\CharacterMicroservice.Infrastructure.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\..\..\..\SharedLibraries\MessageBroker\MessageBroker.csproj" />
+      <ProjectReference Include="..\CharacterMicroservice.Infrastructure\CharacterMicroservice.Infrastructure.csproj" />
+    </ItemGroup>
+
 </Project>

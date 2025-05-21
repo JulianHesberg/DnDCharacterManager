@@ -8,6 +8,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SkillMicroservice.Infrastru
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SkillMicroservice.Presentation", "src\SkillMicroservice.Presentation\SkillMicroservice.Presentation.csproj", "{EFE97097-09C0-483E-8306-DD3293AA7932}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MessageBroker", "..\..\SharedLibraries\MessageBroker\MessageBroker.csproj", "{6C4F1CFC-D29E-4297-87A9-F17F247DFEF4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,5 +32,9 @@ Global
 		{EFE97097-09C0-483E-8306-DD3293AA7932}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EFE97097-09C0-483E-8306-DD3293AA7932}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EFE97097-09C0-483E-8306-DD3293AA7932}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6C4F1CFC-D29E-4297-87A9-F17F247DFEF4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6C4F1CFC-D29E-4297-87A9-F17F247DFEF4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6C4F1CFC-D29E-4297-87A9-F17F247DFEF4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6C4F1CFC-D29E-4297-87A9-F17F247DFEF4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
