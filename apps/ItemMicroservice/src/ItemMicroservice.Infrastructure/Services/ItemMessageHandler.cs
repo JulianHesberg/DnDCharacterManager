@@ -18,16 +18,16 @@ public class ItemMessageHandler : IMessageHandler
         _repository = repository;
         _messageBroker = messageBroker;
     }
-    public async Task HandleMessageAsync<T>(T message)
+    public async Task HandleMessageAsync(IMessage message)
     {
         switch (message)
         {
-            case CraftItemRequest request:
-                await HandleCraftItemRequest(request);
+            case CraftItemRequest craft:
+                await HandleCraftItemRequest(craft);
                 break;
             
-            case RollbackItemCraftedRequest request:
-                await HandleRollbackItemCraftedRequest(request);
+            case RollbackItemCraftedRequest rollback:
+                await HandleRollbackItemCraftedRequest(rollback);
                 break;
         }
     }
@@ -50,7 +50,7 @@ public class ItemMessageHandler : IMessageHandler
                 SagaId = request.SagaId
             };
 
-            await _messageBroker.Publish(QueueNames.ItemServiceQueue, response);
+            await _messageBroker.Publish(QueueNames.ItemServiceQueueOut, response);
         }
         else
         {
@@ -60,7 +60,7 @@ public class ItemMessageHandler : IMessageHandler
                 SagaId = request.SagaId,
                 ErrorMessage = "Item creation failed"
             };
-            await _messageBroker.Publish(QueueNames.CompensationQueue, response);
+            await _messageBroker.Publish(QueueNames.ItemCompensationQueueOut, response);
         }
     }
     
@@ -75,7 +75,7 @@ public class ItemMessageHandler : IMessageHandler
                 SagaId = request.SagaId,
                 CharacterId = request.CharacterId
             };
-            await _messageBroker.Publish(QueueNames.CompensationQueue, rollback);
+            await _messageBroker.Publish(QueueNames.ItemCompensationQueueOut, rollback);
         }
     }
 }

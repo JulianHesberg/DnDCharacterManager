@@ -2,5 +2,5 @@ namespace MessageBroker.Interfaces;
 
 public interface IMessageHandler
 {
-    Task HandleMessageAsync<T>(T message);
+    Task HandleMessageAsync(IMessage message);
 }

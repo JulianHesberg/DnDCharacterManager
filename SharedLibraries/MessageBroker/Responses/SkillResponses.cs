@@ -1,3 +1,5 @@
+using MessageBroker.Interfaces;
+
 namespace SagaCoordinator.Domain.ResponseModels;
 
 public class Skill
@@ -8,9 +10,10 @@ public class Skill
     public string Description { get; set; }
 }
 
-public class SkillListResponse
+public class SkillListResponse : IMessage
 {
     public Guid SagaId { get; set; }
     public int CharacterId { get; set; }
     public List<Skill> Skills { get; set; }
+    public string MessageType => nameof(SkillListResponse);
 }

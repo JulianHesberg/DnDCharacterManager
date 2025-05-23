@@ -6,6 +6,6 @@ public class PurchaseItemSaga : ISaga
 {
     public Guid SagaId { get; set; }
     public int CharacterId { get; set; }  
-    public int GoldAmount { get; set; }  
+    public string ItemId { get; set; }  
     public SagaState State { get; set; }  
 }
