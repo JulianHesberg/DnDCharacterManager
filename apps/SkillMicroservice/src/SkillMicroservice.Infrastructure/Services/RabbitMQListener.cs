@@ -1,3 +1,8 @@
+using MessageBroker;
+using MessageBroker.Interfaces;
+using MessageBroker.Requests;
+using Microsoft.Extensions.Hosting;
+
 namespace SkillMicroservice.Infrastructure.Services;
 
 public class RabbitMQListener : BackgroundService

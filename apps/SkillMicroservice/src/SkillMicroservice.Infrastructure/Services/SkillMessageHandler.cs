@@ -2,6 +2,7 @@ using MessageBroker.Interfaces;
 using MessageBroker.Requests;
 using SkillMicroservice.Domain.Interfaces;
 using MessageBroker;
+using SagaCoordinator.Domain.ResponseModels;
 
 namespace SkillMicroservice.Infrastructure.Services;
 
@@ -37,7 +38,7 @@ public class SkillMessageHandler : IMessageHandler
         {
             SagaId = request.SagaId,
             CharacterId = request.CharacterId,
-            Skills = skills
+            Skills = (List<Skill>)skills
         });
         
     }

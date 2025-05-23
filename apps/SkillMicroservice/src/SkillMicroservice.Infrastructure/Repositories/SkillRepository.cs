@@ -34,5 +34,10 @@ namespace SkillMicroservice.Infrastructure.Repositories
         {
             throw new NotImplementedException();
         }
+
+        public async Task<IEnumerable<Skill>> GetSkillsByLevelAsync(int level)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
