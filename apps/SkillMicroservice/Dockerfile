@@ -1,19 +1,16 @@
-# Use .NET SDK for building
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /app
 
-# Copy and restore dependencies
-COPY SkillMicroservice.sln ./
-COPY src/ ./src/
-RUN dotnet restore
+COPY apps/SkillMicroservice/SkillMicroservice.sln ./
+COPY SharedLibraries/ /SharedLibraries/
+COPY apps/SkillMicroservice/src/ src/
 
-# Build and publish
-RUN dotnet publish src/SkillMicroservice.Presentation/SkillMicroservice.Presentation.csproj -c Release -o /publish
+RUN dotnet restore SkillMicroservice.sln
+RUN dotnet publish src/SkillMicroservice.Presentation/SkillMicroservice.Presentation.csproj \
+    -c Release -o /publish
 
-# Use lightweight runtime image
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
 WORKDIR /app
-COPY --from=build /publish .
-
+COPY --from=build /publish ./
 EXPOSE 8080
 ENTRYPOINT ["dotnet", "SkillMicroservice.Presentation.dll"]

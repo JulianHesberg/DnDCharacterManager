@@ -11,7 +11,7 @@ public class GetCharacterByIdQueryHandler : IRequestHandler<GetCharacterByIdQuer
 {
     private readonly ICharacterReadRepository _repository;
 
-    public GetCharacterByIdQueryHandler(ICharacterReadRepository repository, CancellationToken cancellationToken)
+    public GetCharacterByIdQueryHandler(ICharacterReadRepository repository)
     {
         _repository = repository;
     }
