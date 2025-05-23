@@ -1,61 +1,44 @@
 using MessageBroker.Interfaces;
-using RabbitMQ.Client;  
-using RabbitMQ.Client.Events;  
-using System.Text;  
-using System.Text.Json;  
+
+using EasyNetQ;
+using IMessage = MessageBroker.Interfaces.IMessage;
 
 namespace MessageBroker.Implementations;
 
 public class RabbitMqMessageBroker : IMessageBroker
 {
-    private readonly IConnection _connection;
-    private readonly IModel _channel;
+    private readonly IBus _bus;
+    private readonly Dictionary<string, IDisposable> _subscriptions = new Dictionary<string, IDisposable>();
     
-    public RabbitMqMessageBroker(string hostName, string userName, string password)
+    public RabbitMqMessageBroker(IBus bus)
     {
-        var factory = new ConnectionFactory() { HostName = hostName, UserName = userName, Password = password };
-        _connection = factory.CreateConnection();
-        _channel = _connection.CreateModel();
+        _bus = bus;
     }
     
-    public async Task Publish<T>(string queueName, T message)
+    public async Task Publish<T>(string queueName, T message, CancellationToken cancellationToken = default)
     {
-        await Task.Run(() =>
-        {
-            _channel.QueueDeclare(queue: queueName, durable: false, exclusive: false, autoDelete: false, arguments: null);
-            var jsonMessage = JsonSerializer.Serialize(message);
-            var body = Encoding.UTF8.GetBytes(jsonMessage);
-
-            _channel.BasicPublish(exchange: "", routingKey: queueName, basicProperties: null, body: body);
-        });
+        await _bus.PubSub.PublishAsync<T>(message, cancellationToken);
     }
 
-    public async Task Subscribe<T>(string queueName, Func<T, Task> onMessageReceived)
+    public async Task Subscribe(string queueName, Action<IMessage> onMessageReceived, CancellationToken cancellationToken = default)
     {
-        await Task.Run(() =>
-        {
-            _channel.QueueDeclare(queue: queueName, durable: false, exclusive: false, autoDelete: false, arguments: null);
-            var consumer = new EventingBasicConsumer(_channel);
-
-            consumer.Received += async (model, ea) =>
-            {
-                var body = ea.Body.ToArray();
-                var jsonMessage = Encoding.UTF8.GetString(body);
-                var message = JsonSerializer.Deserialize<T>(jsonMessage);
-
-                if (message != null)
-                {
-                    await onMessageReceived(message);
-                }
-            };
-
-            _channel.BasicConsume(queue: queueName, autoAck: true, consumer: consumer);
-        });
+        if(_subscriptions.Keys.Contains(queueName)){
+            throw new ArgumentException("");
+        }
+        var subscriptionHandle = await _bus.PubSub.SubscribeAsync<IMessage>(
+            queueName,
+            message => onMessageReceived(message),
+            cancellationToken
+        );
+        _subscriptions.Add(queueName, subscriptionHandle);
     }
     
-    public void Dispose()  
+    public Task Unsubscribe<T>(string queueName, CancellationToken cancellationToken = default)  
     {  
-        _channel?.Dispose();  
-        _connection?.Dispose();  
+        if(_subscriptions.TryGetValue(queueName, out var subscriptionHandle)){
+            subscriptionHandle.Dispose();
+            _subscriptions.Remove(queueName);
+        }
+        return Task.CompletedTask;
     }  
 }

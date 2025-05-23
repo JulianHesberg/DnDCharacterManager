@@ -29,28 +29,57 @@ public class SagaMessageCoordinator
         _messageBroker = messageBroker;
     }
 
-    public void StartListening()  
-    {  
-        _messageBroker.Subscribe<PurchaseItemRequest>(QueueNames.CharacterServiceQueue, HandlePurchaseItemRequest);  
-        _messageBroker.Subscribe<ItemListResponse>(QueueNames.ItemServiceQueue, HandleItemListResponse);  
-          
-        _messageBroker.Subscribe<SellItemRequest>(QueueNames.CharacterServiceQueue, HandleSellItemRequest);  
-        _messageBroker.Subscribe<ItemCostResponse>(QueueNames.ItemServiceQueue, HandleItemCostResponse);  
-        
-        _messageBroker.Subscribe<CraftItemRequest>(QueueNames.CharacterServiceQueue, HandleCraftItemRequest);
-        _messageBroker.Subscribe<ItemCraftedResponse>(QueueNames.ItemServiceQueue, HandleItemCraftedResponse);
-          
-        _messageBroker.Subscribe<LevelUpRequest>(QueueNames.CharacterServiceQueue, HandleLevelUpRequest);  
-        _messageBroker.Subscribe<SkillListResponse>(QueueNames.SkillServiceQueue, HandleSkillListResponse);  
-  
-        _messageBroker.Subscribe<AcknowledgeResponse>(QueueNames.CharacterServiceQueue, HandleAcknowledgeResponse); 
-        
-        _messageBroker.Subscribe<RequestFailed>(QueueNames.CompensationQueue, HandleRequestFailed);
-        
-        _messageBroker.Subscribe<RollbackCompleted>(QueueNames.CompensationQueue, HandleRollbackCompleted);
+    public async Task StartListening()
+    {
+        await _messageBroker.Subscribe(QueueNames.CharacterServiceQueue, HandleMessage);
+        await _messageBroker.Subscribe(QueueNames.ItemServiceQueue, HandleMessage);
+        await _messageBroker.Subscribe(QueueNames.SkillServiceQueue, HandleMessage);
+        await _messageBroker.Subscribe(QueueNames.CompensationQueue, HandleMessage);
     }
     
-    private async Task HandleCraftItemRequest(CraftItemRequest request)
+    private void HandleMessage(IMessage message)
+    {
+        switch (message)
+        {
+            case PurchaseItemRequest purchase:
+                HandlePurchaseItemRequest(purchase);
+                break;
+            case ItemListResponse itemList:
+                HandleItemListResponse(itemList);
+                break;
+            case SellItemRequest sell:
+                HandleSellItemRequest(sell);
+                break;
+            case ItemCostResponse itemCost:
+                HandleItemCostResponse(itemCost);
+                break;
+            case CraftItemRequest craft:
+                HandleCraftItemRequest(craft);
+                break;
+            case ItemCraftedResponse crafted:
+                HandleItemCraftedResponse(crafted);
+                break;
+            case LevelUpRequest levelUp:
+                HandleLevelUpRequest(levelUp);
+                break;
+            case SkillListResponse skillList:
+                HandleSkillListResponse(skillList);
+                break;
+            case AcknowledgeResponse acknowledge:
+                HandleAcknowledgeResponse(acknowledge);
+                break;
+            case RequestFailed requestFailed:
+                HandleRequestFailed(requestFailed);
+                break;
+            case RollbackCompleted rollbackCompleted:
+                HandleRollbackCompleted(rollbackCompleted);
+                break;
+            default:
+                Console.WriteLine($"Unknown message type received: {message.GetType().Name}");
+                break;
+        }
+    }
+    private async void HandleCraftItemRequest(CraftItemRequest request)
     {
         var craftSaga = new CraftItemSaga
         {
@@ -65,7 +94,7 @@ public class SagaMessageCoordinator
         await _messageBroker.Publish(QueueNames.ItemServiceQueue, request);
     }
     
-    private async Task HandleItemCraftedResponse(ItemCraftedResponse response)
+    private async void HandleItemCraftedResponse(ItemCraftedResponse response)
     {
         var craftSaga = _craftItemSagaRepository.FindById(response.SagaId);
         if(craftSaga != null)
@@ -77,7 +106,7 @@ public class SagaMessageCoordinator
         }
     }
     
-    private async Task HandlePurchaseItemRequest(PurchaseItemRequest request)
+    private async void HandlePurchaseItemRequest(PurchaseItemRequest request)
     {
         var purchaseSaga = new PurchaseItemSaga
         {
@@ -90,7 +119,7 @@ public class SagaMessageCoordinator
         await _messageBroker.Publish(QueueNames.ItemServiceQueue, request);
     }
 
-    private async Task HandleItemListResponse(ItemListResponse response)
+    private async void HandleItemListResponse(ItemListResponse response)
     {
         var purchaseSaga = _purchaseItemSagaRepository.FindById(response.SagaId);
         if(purchaseSaga != null)
@@ -101,7 +130,7 @@ public class SagaMessageCoordinator
         }
     }
     
-    private async Task HandleSellItemRequest(SellItemRequest request)
+    private async void HandleSellItemRequest(SellItemRequest request)
     {
         var sellSaga = new SellItemSaga
         {
@@ -114,7 +143,7 @@ public class SagaMessageCoordinator
         await _messageBroker.Publish(QueueNames.ItemServiceQueue, request);
     }
 
-    private async Task HandleItemCostResponse(ItemCostResponse response)
+    private async void HandleItemCostResponse(ItemCostResponse response)
     {
         var sellSaga = _sellItemSagaRepository.FindById(response.SagaId);
         if(sellSaga != null)
@@ -125,7 +154,7 @@ public class SagaMessageCoordinator
         }
     }
     
-    private async Task HandleLevelUpRequest(LevelUpRequest request)
+    private async void HandleLevelUpRequest(LevelUpRequest request)
     {
         var levelUpSaga = new LevelUpSaga
         {
@@ -138,7 +167,7 @@ public class SagaMessageCoordinator
         await _messageBroker.Publish(QueueNames.SkillServiceQueue, request);
     }
     
-    private async Task HandleSkillListResponse(SkillListResponse response)
+    private async void HandleSkillListResponse(SkillListResponse response)
     {
         var levelUpSaga = _levelUpSagaRepository.FindById(response.SagaId);
         if(levelUpSaga != null)
@@ -149,7 +178,7 @@ public class SagaMessageCoordinator
         }
     }
 
-    private async Task HandleAcknowledgeResponse(AcknowledgeResponse response)
+    private void HandleAcknowledgeResponse(AcknowledgeResponse response)
     {
         // Acknowledge Item Purchase
         var purchaseSaga = _purchaseItemSagaRepository.FindById(response.SagaId);
@@ -187,7 +216,7 @@ public class SagaMessageCoordinator
         }
     }
 
-    private async Task HandleRequestFailed(RequestFailed response)
+    private async void HandleRequestFailed(RequestFailed response)
     {
         var itemSaga = _craftItemSagaRepository.FindById(response.SagaId);
         if(itemSaga != null)
@@ -247,7 +276,7 @@ public class SagaMessageCoordinator
         }
     }
 
-    private async Task HandleRollbackCompleted(RollbackCompleted response)
+    private void HandleRollbackCompleted(RollbackCompleted response)
     {
         var craftedSaga = _craftItemSagaRepository.FindById(response.SagaId);
         if (craftedSaga.SagaId != null)
