@@ -18,13 +18,20 @@ using CharacterMicroservice.Infrastructure.Presistance.Mongo.EventHandlers.Notes
 using CharacterMicroservice.Infrastructure.Configurations;
 using CharacterMicroservice.Infrastructure.Services;
 using MessageBroker.Configuration;
+using CharacterMicroservice.Infrastructure.Presistance.DbContexts;
+using Microsoft.EntityFrameworkCore;
 using MessageBroker.Factories;
 using MessageBroker.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddDbContext<CharacterDbContext>(opts =>
+    opts.UseSqlServer(builder.Configuration.GetConnectionString("CharacterDb")));
+
+
 builder.Services.Configure<MongoDbSettings>(
-    builder.Configuration.GetSection("MongoDbSettings"));
+    builder.Configuration.GetSection("MongoDbSettings")
+);
 
 var rabbitMqOptions = builder.Configuration.GetSection("MessageBrokerOptions").Get<MessageBrokerOptions>();
 
@@ -76,9 +83,8 @@ builder.Services.AddAutoMapper(
     typeof(CharacterMappingProfile).Assembly
 );
 
-builder.Services.AddTransient(
-    typeof(IPipelineBehavior<,>)
-);
+
+
 
 builder.Services.AddControllers();
 
@@ -95,5 +101,12 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.MapControllers();
+
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<CharacterDbContext>();
+    // creates the DB if it doesn’t exist, or applies pending migrations
+    await db.Database.MigrateAsync();
+}
 
 app.Run();

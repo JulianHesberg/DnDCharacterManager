@@ -1,25 +1,16 @@
-# Stage 1: Build
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
-WORKDIR /src
+WORKDIR /app
 
-# Copy .csproj files
-COPY src/ItemMicroservice.Presentation/ItemMicroservice.Presentation.csproj ./ItemMicroservice.Presentation/
-COPY src/ItemMicroservice.Application/ItemMicroservice.Application.csproj ./ItemMicroservice.Application/
-COPY src/ItemMicroservice.Infrastructure/ItemMicroservice.Infrastructure.csproj ./ItemMicroservice.Infrastructure/
-COPY src/ItemMicroservice.Domain/ItemMicroservice.Domain.csproj ./ItemMicroservice.Domain/
+COPY apps/ItemMicroservice/ItemMicroservice.sln ./
+COPY SharedLibraries/ /SharedLibraries/
+COPY apps/ItemMicroservice/src/ src/
 
-# Restore
-RUN dotnet restore ./ItemMicroservice.Presentation/ItemMicroservice.Presentation.csproj
+RUN dotnet restore ItemMicroservice.sln
+RUN dotnet publish src/ItemMicroservice.Presentation/ItemMicroservice.Presentation.csproj \
+    -c Release -o /publish
 
-# Copy everything
-COPY src/ ./ 
-
-# Publish
-WORKDIR /src/ItemMicroservice.Presentation
-RUN dotnet publish -c Release -o /app/publish
-
-# Stage 2: Runtime
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
 WORKDIR /app
-COPY --from=build /app/publish .
+COPY --from=build /publish ./
+EXPOSE 8080
 ENTRYPOINT ["dotnet", "ItemMicroservice.Presentation.dll"]

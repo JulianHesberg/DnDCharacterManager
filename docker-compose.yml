@@ -41,10 +41,26 @@ services:
     volumes:
       - mongo-skill-data:/data/db
 
+  sqlserver-character:
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    container_name: character-sqlserver
+    environment:
+      ACCEPT_EULA: "Y"
+      SA_PASSWORD: "Your_strong_P@ssw0rd"
+    ports:
+      - "1433:1433"
+    volumes:
+      - sqlserver-character-data:/var/opt/mssql
+    healthcheck:
+      test: ["CMD-SHELL", " /opt/mssql-tools/bin/sqlcmd -U sa -P \"Your_strong_P@ssw0rd\" -Q \"SELECT 1\" "]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
   items-api:
     build:
-      context: ./apps/ItemMicroservice
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: apps/ItemMicroservice/Dockerfile
     container_name: items-api
     ports:
       - "5000:8080"
@@ -58,28 +74,37 @@ services:
         
   character-api:
     build:
-      context: ./apps/CharacterMicroservice
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: apps/CharacterMicroservice/Dockerfile
     container_name: character-api
     ports:
       - "5001:8080"
     environment:
-        - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_ENVIRONMENT=Development
+      # EF Core / SQL Server
+      - ConnectionStrings__CharacterDb=Server=sqlserver-character,1433;Database=CharacterDb;User Id=sa;Password=Your_strong_P@ssw0rd;Encrypt=false;
+      # MongoDB for read-side
+      - Mongo__ConnectionString=mongodb:mongodb://mongo-character:27017
+      - Mongo__Database=CharacterReadDb
     depends_on:
       rabbitmq:
         condition: service_healthy
       mongo-character:
         condition: service_healthy
+      sqlserver-character:
+        condition: service_healthy
         
   skill-api:
     build:
-      context: ./apps/SkillMicroservice
-      dockerfile: Dockerfile
+      context: .                                 # ← repo root
+      dockerfile: apps/SkillMicroservice/Dockerfile
     container_name: skill-api
     ports:
       - "5002:8080"
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
+      - Mongo__ConnectionString=mongodb://mongo-skill:27017
+      - Mongo__Database=SkillDb
     depends_on:
       rabbitmq:
         condition: service_healthy
@@ -91,3 +116,4 @@ volumes:
   mongo-item-data:
   mongo-character-data:
   mongo-skill-data:
+  sqlserver-character-data:

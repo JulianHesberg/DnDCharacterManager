@@ -1,19 +1,24 @@
-# Use .NET SDK for building
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /app
 
-# Copy and restore dependencies
-COPY CharacterMicroservice.sln ./
-COPY src/ ./src/
-RUN dotnet restore
+# 1) Copy your solution file
+COPY apps/CharacterMicroservice/CharacterMicroservice.sln ./
 
-# Build and publish
-RUN dotnet publish src/CharacterMicroservice.Presentation/CharacterMicroservice.Presentation.csproj -c Release -o /publish
+# 2) Copy SharedLibraries into container root
+COPY SharedLibraries/ /SharedLibraries/
 
-# Use lightweight runtime image
+# 3) Copy your service code
+COPY apps/CharacterMicroservice/src/ src/
+
+# 4) Now restore will see ../SharedLibraries/MessageBroker/MessageBroker.csproj
+RUN dotnet restore CharacterMicroservice.sln
+
+# 5) Publish only the Presentation project
+RUN dotnet publish src/CharacterMicroservice.Presentation/CharacterMicroservice.Presentation.csproj \
+    -c Release -o /publish
+
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
 WORKDIR /app
-COPY --from=build /publish .
-
+COPY --from=build /publish ./
 EXPOSE 8080
 ENTRYPOINT ["dotnet", "CharacterMicroservice.Presentation.dll"]

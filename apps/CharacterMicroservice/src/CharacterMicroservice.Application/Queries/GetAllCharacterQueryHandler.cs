@@ -12,7 +12,7 @@ public class GetAllCharactersQueryHandler : IRequestHandler<GetAllCharactersQuer
 {
     private readonly ICharacterReadRepository _repository;
 
-    public GetAllCharactersQueryHandler(ICharacterReadRepository repository, CancellationToken cancellationToken)
+    public GetAllCharactersQueryHandler(ICharacterReadRepository repository)
     {
         _repository = repository;
     }
