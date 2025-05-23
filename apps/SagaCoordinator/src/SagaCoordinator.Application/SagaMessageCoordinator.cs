@@ -34,7 +34,9 @@ public class SagaMessageCoordinator
         await _messageBroker.Subscribe(QueueNames.CharacterServiceQueueOut, HandleMessage);
         await _messageBroker.Subscribe(QueueNames.ItemServiceQueueOut, HandleMessage);
         await _messageBroker.Subscribe(QueueNames.SkillServiceQueueOut, HandleMessage);
-        await _messageBroker.Subscribe(QueueNames.CompensationQueue, HandleMessage);
+        await _messageBroker.Subscribe(QueueNames.ItemCompensationQueueOut, HandleMessage);
+        await _messageBroker.Subscribe(QueueNames.SkillCompensationQueueOut, HandleMessage);
+        await _messageBroker.Subscribe(QueueNames.CharacterCompensationQueueOut, HandleMessage);
     }
     
     private void HandleMessage(IMessage message)
@@ -229,7 +231,7 @@ public class SagaMessageCoordinator
                 CharacterId = response.CharacterId,
                 ItemId = itemSaga.ItemId
             };
-            await _messageBroker.Publish(QueueNames.CompensationQueue, rollback);
+            await _messageBroker.Publish(QueueNames.ItemCompensationQueueIn, rollback);
             return;
         }
         
@@ -244,7 +246,7 @@ public class SagaMessageCoordinator
                 CharacterId = purchaseSaga.CharacterId,
                 ErrorMessage = response.ErrorMessage
             };
-            await _messageBroker.Publish(QueueNames.CompensationQueue, errorMessage);
+            await _messageBroker.Publish(QueueNames.CharacterCompensationQueueIn, errorMessage);
         }
         
         var sellSaga = _sellItemSagaRepository.FindById(response.SagaId);
@@ -258,7 +260,7 @@ public class SagaMessageCoordinator
                 CharacterId = sellSaga.CharacterId,
                 ErrorMessage = response.ErrorMessage
             };
-            await _messageBroker.Publish(QueueNames.CompensationQueue, errorMessage);
+            await _messageBroker.Publish(QueueNames.CharacterCompensationQueueIn, errorMessage);
         }
         
         var levelUpSaga = _levelUpSagaRepository.FindById(response.SagaId);
@@ -272,7 +274,7 @@ public class SagaMessageCoordinator
                 CharacterId = levelUpSaga.CharacterId,
                 ErrorMessage = response.ErrorMessage
             };
-            await _messageBroker.Publish(QueueNames.CompensationQueue, errorMessage);
+            await _messageBroker.Publish(QueueNames.CharacterCompensationQueueIn, errorMessage);
         }
     }
 

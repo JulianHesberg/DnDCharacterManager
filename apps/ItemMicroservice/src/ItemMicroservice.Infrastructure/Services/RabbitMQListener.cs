@@ -21,7 +21,7 @@ public class RabbitMQListener : BackgroundService
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
         await _messageBroker.Subscribe(QueueNames.ItemServiceQueueIn, HandleMessage, stoppingToken);
-        await _messageBroker.Subscribe(QueueNames.CompensationQueue, HandleMessage, stoppingToken);
+        await _messageBroker.Subscribe(QueueNames.ItemCompensationQueueIn, HandleMessage, stoppingToken);
     }
 
     private async void HandleMessage(IMessage message)

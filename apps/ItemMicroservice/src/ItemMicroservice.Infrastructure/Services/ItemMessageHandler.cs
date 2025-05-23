@@ -60,7 +60,7 @@ public class ItemMessageHandler : IMessageHandler
                 SagaId = request.SagaId,
                 ErrorMessage = "Item creation failed"
             };
-            await _messageBroker.Publish(QueueNames.CompensationQueue, response);
+            await _messageBroker.Publish(QueueNames.ItemCompensationQueueOut, response);
         }
     }
     
@@ -75,7 +75,7 @@ public class ItemMessageHandler : IMessageHandler
                 SagaId = request.SagaId,
                 CharacterId = request.CharacterId
             };
-            await _messageBroker.Publish(QueueNames.CompensationQueue, rollback);
+            await _messageBroker.Publish(QueueNames.ItemCompensationQueueOut, rollback);
         }
     }
 }
