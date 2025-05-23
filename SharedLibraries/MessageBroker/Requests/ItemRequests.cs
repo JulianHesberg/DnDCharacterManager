@@ -6,7 +6,7 @@ public class PurchaseItemRequest : IMessage
 {
     public Guid SagaId { get; set; }
     public int CharacterId { get; set; }
-    public int GoldAmount { get; set; }
+    public string ItemId { get; set; }
     public string MessageType => nameof(PurchaseItemRequest);
 }
 

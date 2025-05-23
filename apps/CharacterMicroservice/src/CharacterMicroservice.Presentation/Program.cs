@@ -16,15 +16,20 @@ using CharacterMicroservice.Infrastructure.Presistance.Mongo.EventHandlers.Items
 using CharacterMicroservice.Infrastructure.Presistance.Mongo.EventHandlers.Skills;
 using CharacterMicroservice.Infrastructure.Presistance.Mongo.EventHandlers.Notes;
 using CharacterMicroservice.Infrastructure.Configurations;
+using CharacterMicroservice.Infrastructure.Services;
 using MessageBroker.Configuration;
+using MessageBroker.Factories;
+using MessageBroker.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.Configure<MongoDbSettings>(
     builder.Configuration.GetSection("MongoDbSettings"));
 
-builder.Services.Configure<RabbitMQSettings>(
-    builder.Configuration.GetSection("RabbitMQSettings"));
+var rabbitMqOptions = builder.Configuration.GetSection("MessageBrokerOptions").Get<MessageBrokerOptions>();
+
+// Register IMessageBroker using the factory
+builder.Services.AddScoped<IMessageBroker>(_ => RabbitMQFactory.Create(rabbitMqOptions));
 
 
 builder.Services.AddScoped<ICharacterSheetRepository, CharacterSheetRepository>();
@@ -36,6 +41,10 @@ builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 builder.Services.AddSingleton<MongoDbContext>();
 builder.Services.AddScoped<ICharacterReadRepository, CharacterReadRepository>();
+
+builder.Services.AddSingleton<IMessageHandler, CharacterMessageHandler>();
+
+builder.Services.AddHostedService<RabbitMQListener>();
 
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(
     typeof(CreateCharacterCommandHandler).Assembly,

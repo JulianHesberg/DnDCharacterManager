@@ -46,6 +46,9 @@ public class SagaMessageCoordinator
             case PurchaseItemRequest purchase:
                 HandlePurchaseItemRequest(purchase);
                 break;
+            case ItemPurchasedResponse item:
+                HandleItemPurchasedResponse(item);
+                break;
             case ItemListResponse itemList:
                 HandleItemListResponse(itemList);
                 break;
@@ -114,11 +117,21 @@ public class SagaMessageCoordinator
         {
             SagaId = new Guid(),
             CharacterId = request.CharacterId,
-            GoldAmount = request.GoldAmount,
+            ItemId = request.ItemId,
             State = SagaState.Initialized
         };
         _purchaseItemSagaRepository.Save(purchaseSaga);
-        await _messageBroker.Publish(QueueNames.ItemServiceQueueIn, request);
+        await _messageBroker.Publish(QueueNames.CharacterServiceQueueIn, request);
+        await _messageBroker.Subscribe(QueueNames.GUIInteractionQueueOut + purchaseSaga.CharacterId, HandleMessage);
+    }
+
+    private async void HandleItemPurchasedResponse(ItemPurchasedResponse response)
+    {
+        var purchaseSaga = _purchaseItemSagaRepository.FindById(response.SagaId);
+        await _messageBroker.Publish(QueueNames.GUIInteractionQueueIn + purchaseSaga.CharacterId, response);
+        purchaseSaga.State = SagaState.Completed;
+        _purchaseItemSagaRepository.Update(purchaseSaga);
+        await _messageBroker.Unsubscribe(QueueNames.GUIInteractionQueueOut + purchaseSaga.CharacterId);
     }
 
     private async void HandleItemListResponse(ItemListResponse response)
@@ -246,7 +259,7 @@ public class SagaMessageCoordinator
                 CharacterId = purchaseSaga.CharacterId,
                 ErrorMessage = response.ErrorMessage
             };
-            await _messageBroker.Publish(QueueNames.CharacterCompensationQueueIn, errorMessage);
+            await _messageBroker.Publish(QueueNames.GUIInteractionQueueIn + errorMessage.CharacterId, errorMessage);
         }
         
         var sellSaga = _sellItemSagaRepository.FindById(response.SagaId);

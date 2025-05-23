@@ -33,7 +33,7 @@ public class RabbitMqMessageBroker : IMessageBroker
         _subscriptions.Add(queueName, subscriptionHandle);
     }
     
-    public Task Unsubscribe<T>(string queueName, CancellationToken cancellationToken = default)  
+    public Task Unsubscribe(string queueName, CancellationToken cancellationToken = default)  
     {  
         if(_subscriptions.TryGetValue(queueName, out var subscriptionHandle)){
             subscriptionHandle.Dispose();
