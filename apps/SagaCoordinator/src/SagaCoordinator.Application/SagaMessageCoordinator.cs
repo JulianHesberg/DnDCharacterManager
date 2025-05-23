@@ -31,9 +31,9 @@ public class SagaMessageCoordinator
 
     public async Task StartListening()
     {
-        await _messageBroker.Subscribe(QueueNames.CharacterServiceQueue, HandleMessage);
-        await _messageBroker.Subscribe(QueueNames.ItemServiceQueue, HandleMessage);
-        await _messageBroker.Subscribe(QueueNames.SkillServiceQueue, HandleMessage);
+        await _messageBroker.Subscribe(QueueNames.CharacterServiceQueueOut, HandleMessage);
+        await _messageBroker.Subscribe(QueueNames.ItemServiceQueueOut, HandleMessage);
+        await _messageBroker.Subscribe(QueueNames.SkillServiceQueueOut, HandleMessage);
         await _messageBroker.Subscribe(QueueNames.CompensationQueue, HandleMessage);
     }
     
@@ -91,7 +91,7 @@ public class SagaMessageCoordinator
             State = SagaState.Initialized
         };
         _craftItemSagaRepository.Save(craftSaga);
-        await _messageBroker.Publish(QueueNames.ItemServiceQueue, request);
+        await _messageBroker.Publish(QueueNames.ItemServiceQueueIn, request);
     }
     
     private async void HandleItemCraftedResponse(ItemCraftedResponse response)
@@ -102,7 +102,7 @@ public class SagaMessageCoordinator
             craftSaga.ItemId = response.ItemId;
             craftSaga.State = SagaState.InProgress;
             _craftItemSagaRepository.Update(craftSaga);
-            await _messageBroker.Publish(QueueNames.CharacterServiceQueue, response);
+            await _messageBroker.Publish(QueueNames.CharacterServiceQueueIn, response);
         }
     }
     
@@ -116,7 +116,7 @@ public class SagaMessageCoordinator
             State = SagaState.Initialized
         };
         _purchaseItemSagaRepository.Save(purchaseSaga);
-        await _messageBroker.Publish(QueueNames.ItemServiceQueue, request);
+        await _messageBroker.Publish(QueueNames.ItemServiceQueueIn, request);
     }
 
     private async void HandleItemListResponse(ItemListResponse response)
@@ -126,7 +126,7 @@ public class SagaMessageCoordinator
         {
             purchaseSaga.State = SagaState.InProgress;
             _purchaseItemSagaRepository.Update(purchaseSaga);
-           await _messageBroker.Publish(QueueNames.CharacterServiceQueue, response);
+           await _messageBroker.Publish(QueueNames.CharacterServiceQueueIn, response);
         }
     }
     
@@ -140,7 +140,7 @@ public class SagaMessageCoordinator
             State = SagaState.Initialized
         };
         _sellItemSagaRepository.Save(sellSaga);
-        await _messageBroker.Publish(QueueNames.ItemServiceQueue, request);
+        await _messageBroker.Publish(QueueNames.ItemServiceQueueIn, request);
     }
 
     private async void HandleItemCostResponse(ItemCostResponse response)
@@ -150,7 +150,7 @@ public class SagaMessageCoordinator
         {
             sellSaga.State = SagaState.InProgress;
             _sellItemSagaRepository.Update(sellSaga);
-            await _messageBroker.Publish(QueueNames.CharacterServiceQueue, response);
+            await _messageBroker.Publish(QueueNames.CharacterServiceQueueIn, response);
         }
     }
     
@@ -164,7 +164,7 @@ public class SagaMessageCoordinator
             State = SagaState.Initialized
         };
         _levelUpSagaRepository.Save(levelUpSaga);
-        await _messageBroker.Publish(QueueNames.SkillServiceQueue, request);
+        await _messageBroker.Publish(QueueNames.SkillServiceQueueIn, request);
     }
     
     private async void HandleSkillListResponse(SkillListResponse response)
@@ -174,7 +174,7 @@ public class SagaMessageCoordinator
         {
             levelUpSaga.State = SagaState.InProgress;
             _levelUpSagaRepository.Update(levelUpSaga);
-            await _messageBroker.Publish(QueueNames.CharacterServiceQueue, response);
+            await _messageBroker.Publish(QueueNames.CharacterServiceQueueIn, response);
         }
     }
 

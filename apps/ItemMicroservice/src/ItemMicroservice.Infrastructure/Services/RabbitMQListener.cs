@@ -20,14 +20,13 @@ public class RabbitMQListener : BackgroundService
     
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        await _messageBroker.Subscribe<CraftItemRequest>(QueueNames.ItemServiceQueue, async message =>
-        {
-            await _messageHandler.HandleMessageAsync(message);
-        });
-        
-        await _messageBroker.Subscribe<RollbackItemCraftedRequest>(QueueNames.CompensationQueue, async message =>
-        {
-            await _messageHandler.HandleMessageAsync(message);
-        });
+        await _messageBroker.Subscribe(QueueNames.ItemServiceQueueIn, HandleMessage, stoppingToken);
+        await _messageBroker.Subscribe(QueueNames.CompensationQueue, HandleMessage, stoppingToken);
     }
+
+    private async void HandleMessage(IMessage message)
+    {
+        await _messageHandler.HandleMessageAsync(message);
+    }
+
 }
