@@ -3,6 +3,7 @@ using MessageBroker.Requests;
 using SkillMicroservice.Domain.Interfaces;
 using MessageBroker;
 using SagaCoordinator.Domain.ResponseModels;
+using Skill = SkillMicroservice.Domain.Entities.Skill;
 
 namespace SkillMicroservice.Infrastructure.Services;
 
@@ -34,12 +35,18 @@ public class SkillMessageHandler : IMessageHandler
     {
         var skills = await _repository.GetSkillsByLevelAsync(request.Level);
 
+       
+        var responseSkills = skills.Select(skill => new SagaCoordinator.Domain.ResponseModels.Skill
+        {
+            Cost = skill.Cost,
+            Description = skill.Description
+        }).ToList();
+
         await _messageBroker.Publish(QueueNames.SkillServiceQueue, new SkillListResponse
         {
             SagaId = request.SagaId,
             CharacterId = request.CharacterId,
-            Skills = (List<Skill>)skills
+            Skills = responseSkills 
         });
-        
     }
 }
