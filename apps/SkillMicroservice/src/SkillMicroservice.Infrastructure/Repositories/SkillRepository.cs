@@ -57,7 +57,7 @@ namespace SkillMicroservice.Infrastructure.Repositories
 
         public async Task<IEnumerable<Skill>> GetSkillsByLevelAsync(int level)
         {
-            return await _skills.Find(s => s.Level == level).ToListAsync();
+            return await _skills.Find(s => s.Cost == level).ToListAsync();
         }
     }
 }
