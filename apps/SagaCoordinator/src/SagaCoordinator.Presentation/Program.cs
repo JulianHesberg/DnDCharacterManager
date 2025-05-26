@@ -1,3 +1,5 @@
+using MessageBroker.Configuration;
+using MessageBroker.Factories;
 using MessageBroker.Implementations;
 using MessageBroker.Interfaces;
 using SagaCoordinator.Application;
@@ -7,8 +9,12 @@ using SagaCoordinator.Infrastructure.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddScoped<IMessageBroker>(provider =>
-    new RabbitMqMessageBroker("localhost", "guest", "guest")); // Replace with actual RabbitMQ credentials
+var rabbitMqOptions = builder.Configuration.GetSection("MessageBrokerOptions").Get<MessageBrokerOptions>();
+
+// Register IMessageBroker using the factory
+builder.Services.AddScoped<IMessageBroker>(_ => RabbitMQFactory.Create(rabbitMqOptions));
+
+// Replace with actual RabbitMQ credentials
 builder.Services.AddScoped<ISagaRepository<PurchaseItemSaga>, InMemorySagaRepository<PurchaseItemSaga>>();
 builder.Services.AddScoped<ISagaRepository<SellItemSaga>, InMemorySagaRepository<SellItemSaga>>();
 builder.Services.AddScoped<ISagaRepository<LevelUpSaga>, InMemorySagaRepository<LevelUpSaga>>();

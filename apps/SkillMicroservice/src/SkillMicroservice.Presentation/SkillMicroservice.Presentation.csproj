@@ -4,7 +4,7 @@
         <TargetFramework>net8.0</TargetFramework>
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
-        <InvariantGlobalization>true</InvariantGlobalization>
+        <InvariantGlobalization>false</InvariantGlobalization>
     </PropertyGroup>
 
     <ItemGroup>
@@ -13,7 +13,9 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\..\..\..\SharedLibraries\MessageBroker\MessageBroker.csproj" />
       <ProjectReference Include="..\SkillMicroservice.Application\SkillMicroservice.Application.csproj" />
+      <ProjectReference Include="..\SkillMicroservice.Infrastructure\SkillMicroservice.Infrastructure.csproj" />
     </ItemGroup>
 
 </Project>
