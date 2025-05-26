@@ -1,4 +1,6 @@
 using MessageBroker.Configuration;
+using MessageBroker.Factories;
+using MessageBroker.Interfaces;
 using SkillMicroservice.Infrastructure.Configurations;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -6,9 +8,10 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.Configure<MongoDbSettings>(
     builder.Configuration.GetSection("MongoDbSettings"));
 
-builder.Services.Configure<RabbitMQSettings>(
-    builder.Configuration.GetSection("RabbitMQSettings"));
+var rabbitMqOptions = builder.Configuration.GetSection("MessageBrokerOptions").Get<MessageBrokerOptions>();
 
+// Register IMessageBroker using the factory
+builder.Services.AddSingleton<IMessageBroker>(_ => RabbitMQFactory.Create(rabbitMqOptions));
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
