@@ -29,14 +29,6 @@ public class ItemCostResponse : IMessage
     public string MessageType => nameof(ItemCostResponse);
 }
 
-public class ItemPurchasedResponse : IMessage
-{
-    public Guid SagaId { get; set; }
-    public int CharacterId { get; set; }
-    public string ItemId { get; set; }
-    public string MessageType => nameof(ItemPurchasedResponse);
-}
-
 public class ItemCraftedResponse : IMessage
 {
     public Guid SagaId { get; set; }

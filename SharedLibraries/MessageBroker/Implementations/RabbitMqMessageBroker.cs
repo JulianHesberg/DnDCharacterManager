@@ -23,7 +23,7 @@ public class RabbitMqMessageBroker : IMessageBroker
     public async Task Subscribe(string queueName, Action<IMessage> onMessageReceived, CancellationToken cancellationToken = default)
     {
         if(_subscriptions.Keys.Contains(queueName)){
-            throw new ArgumentException("");
+            throw new ArgumentException("Already Subscribed to this queue: " + queueName);
         }
         var subscriptionHandle = await _bus.PubSub.SubscribeAsync<IMessage>(
             queueName,

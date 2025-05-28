@@ -28,9 +28,6 @@ public class CharacterMessageHandler : IMessageHandler
             case ItemCraftedResponse crafted:
                 await HandleItemCrafted(crafted);
                 break;
-            case PurchaseItemRequest items:
-                await HandlePurchaseItemRequest(items);
-                break;
         }
     }
 
@@ -52,36 +49,6 @@ public class CharacterMessageHandler : IMessageHandler
 
             };
             await _messageBroker.Publish(QueueNames.CharacterServiceQueueOut, response);
-        }
-        catch (Exception e)
-        {
-            var failure = new RequestFailed
-            {
-                SagaId = message.SagaId,
-                CharacterId = message.CharacterId,
-                ErrorMessage = e.Message
-            };
-            await _messageBroker.Publish(QueueNames.CharacterCompensationQueueOut, failure);
-        }
-    }
-
-    private async Task HandlePurchaseItemRequest(PurchaseItemRequest message)
-    {
-        try
-        {
-            var charItem = new CharacterItems
-            {
-                ItemId = message.ItemId,
-                CharacterId = message.CharacterId
-            };
-            await _mediator.Send(new CreateCharacterItemCommand(charItem));
-            var success = new ItemPurchasedResponse
-            {
-                SagaId = message.SagaId,
-                ItemId = message.ItemId,
-                CharacterId = message.CharacterId
-            };
-            await _messageBroker.Publish(QueueNames.GUIInteractionQueueOut + success.CharacterId, success);
         }
         catch (Exception e)
         {

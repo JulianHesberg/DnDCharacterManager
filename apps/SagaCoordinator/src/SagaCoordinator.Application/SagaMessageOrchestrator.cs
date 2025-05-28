@@ -7,7 +7,7 @@ using SagaCoordinator.Infrastructure.Interfaces;
 
 namespace SagaCoordinator.Application;
 
-public class SagaMessageCoordinator
+public class SagaMessageOrchestrator
 {
     private readonly ISagaRepository<PurchaseItemSaga> _purchaseItemSagaRepository;
     private readonly ISagaRepository<SellItemSaga> _sellItemSagaRepository;
@@ -15,7 +15,7 @@ public class SagaMessageCoordinator
     private readonly ISagaRepository<LevelUpSaga> _levelUpSagaRepository;
     private readonly IMessageBroker _messageBroker;
     
-    public SagaMessageCoordinator(
+    public SagaMessageOrchestrator(
         ISagaRepository<PurchaseItemSaga> purchaseItemSagaRepository,
         ISagaRepository<SellItemSaga> sellItemSagaRepository,
         ISagaRepository<CraftItemSaga> craftItemSagaRepository,
@@ -45,9 +45,6 @@ public class SagaMessageCoordinator
         {
             case PurchaseItemRequest purchase:
                 HandlePurchaseItemRequest(purchase);
-                break;
-            case ItemPurchasedResponse item:
-                HandleItemPurchasedResponse(item);
                 break;
             case ItemListResponse itemList:
                 HandleItemListResponse(itemList);
@@ -117,23 +114,11 @@ public class SagaMessageCoordinator
         {
             SagaId = new Guid(),
             CharacterId = request.CharacterId,
-            ItemId = request.ItemId,
             State = SagaState.Initialized
         };
         _purchaseItemSagaRepository.Save(purchaseSaga);
-        await _messageBroker.Publish(QueueNames.CharacterServiceQueueIn, request);
-        await _messageBroker.Subscribe(QueueNames.GUIInteractionQueueOut + purchaseSaga.CharacterId, HandleMessage);
+        await _messageBroker.Publish(QueueNames.SkillServiceQueueIn, request);
     }
-
-    private async void HandleItemPurchasedResponse(ItemPurchasedResponse response)
-    {
-        var purchaseSaga = _purchaseItemSagaRepository.FindById(response.SagaId);
-        await _messageBroker.Publish(QueueNames.GUIInteractionQueueIn + purchaseSaga.CharacterId, response);
-        purchaseSaga.State = SagaState.Completed;
-        _purchaseItemSagaRepository.Update(purchaseSaga);
-        await _messageBroker.Unsubscribe(QueueNames.GUIInteractionQueueOut + purchaseSaga.CharacterId);
-    }
-
     private async void HandleItemListResponse(ItemListResponse response)
     {
         var purchaseSaga = _purchaseItemSagaRepository.FindById(response.SagaId);
@@ -236,8 +221,6 @@ public class SagaMessageCoordinator
         var itemSaga = _craftItemSagaRepository.FindById(response.SagaId);
         if(itemSaga != null)
         {
-            itemSaga.State = SagaState.InProgress;
-            _craftItemSagaRepository.Update(itemSaga);
             var rollback = new RollbackItemCraftedRequest
             {
                 SagaId = itemSaga.SagaId,
@@ -259,7 +242,7 @@ public class SagaMessageCoordinator
                 CharacterId = purchaseSaga.CharacterId,
                 ErrorMessage = response.ErrorMessage
             };
-            await _messageBroker.Publish(QueueNames.GUIInteractionQueueIn + errorMessage.CharacterId, errorMessage);
+            await _messageBroker.Publish(QueueNames.CharacterServiceQueueIn + errorMessage.CharacterId, errorMessage);
         }
         
         var sellSaga = _sellItemSagaRepository.FindById(response.SagaId);

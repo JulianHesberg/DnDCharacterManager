@@ -18,12 +18,12 @@ builder.Services.AddScoped<IMessageBroker>(_ => RabbitMQFactory.Create(rabbitMqO
 builder.Services.AddScoped<ISagaRepository<PurchaseItemSaga>, InMemorySagaRepository<PurchaseItemSaga>>();
 builder.Services.AddScoped<ISagaRepository<SellItemSaga>, InMemorySagaRepository<SellItemSaga>>();
 builder.Services.AddScoped<ISagaRepository<LevelUpSaga>, InMemorySagaRepository<LevelUpSaga>>();
-builder.Services.AddScoped<SagaMessageCoordinator>();
+builder.Services.AddScoped<SagaMessageOrchestrator>();
 
 var app = builder.Build();
 
-var sagaCoordinator = app.Services.GetRequiredService<SagaMessageCoordinator>();
-sagaCoordinator.StartListening();
+var sagaMessageOrchestrator = app.Services.GetRequiredService<SagaMessageOrchestrator>();
+sagaMessageOrchestrator.StartListening();
 
 
 app.Run();

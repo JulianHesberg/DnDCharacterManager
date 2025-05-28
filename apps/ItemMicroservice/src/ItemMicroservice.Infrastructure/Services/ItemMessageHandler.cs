@@ -40,19 +40,22 @@ public class ItemMessageHandler : IMessageHandler
             Price = request.Price,
             Description = request.Description
         };
-        var created = await _repository.CreateAsync(item);
-        if (created.Id != null)
+        try
         {
-            var response = new ItemCraftedResponse
-            {
-                CharacterId = request.CharacterId,
-                ItemId = created.Id,
-                SagaId = request.SagaId
-            };
-
-            await _messageBroker.Publish(QueueNames.ItemServiceQueueOut, response);
+            var created = await _repository.CreateAsync(item);
+                    if (created.Id != null)
+                    {
+                        var response = new ItemCraftedResponse
+                        {
+                            CharacterId = request.CharacterId,
+                            ItemId = created.Id,
+                            SagaId = request.SagaId
+                        };
+            
+                        await _messageBroker.Publish(QueueNames.ItemServiceQueueOut, response);
+                    }
         }
-        else
+        catch (Exception)
         {
             var response = new RequestFailed
             {

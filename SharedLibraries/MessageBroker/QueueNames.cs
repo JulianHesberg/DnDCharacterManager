@@ -14,7 +14,4 @@ public static class QueueNames
     public const string SkillCompensationQueueOut = "SkillCompensationQueueOut";
     public const string CharacterCompensationQueueIn = "CharacterCompensationQueueIn";
     public const string CharacterCompensationQueueOut = "CharacterCompensationQueueOut";
-    public const string GUIInteractionQueueIn = "GUIInteractionQueueIn";
-    public const string GUIInteractionQueueOut = "GUIInteractionQueueOut";
-
 }
