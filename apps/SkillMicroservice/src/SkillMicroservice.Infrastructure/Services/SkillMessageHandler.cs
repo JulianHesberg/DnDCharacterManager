@@ -49,4 +49,9 @@ public class SkillMessageHandler : IMessageHandler
             Skills = responseSkills 
         });
     }
+
+    public Task HandleMessageAsync(IMessage message)
+    {
+        throw new NotImplementedException();
+    }
 }

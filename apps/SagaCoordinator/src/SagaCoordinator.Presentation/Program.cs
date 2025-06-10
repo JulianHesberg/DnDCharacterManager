@@ -12,7 +12,7 @@ var builder = WebApplication.CreateBuilder(args);
 var rabbitMqOptions = builder.Configuration.GetSection("MessageBrokerOptions").Get<MessageBrokerOptions>();
 
 // Register IMessageBroker using the factory
-builder.Services.AddScoped<IMessageBroker>(_ => RabbitMQFactory.Create(rabbitMqOptions));
+builder.Services.AddScoped<IMessageBroker>(_ => RabbitMQFactory.CreateRabbitAMPQ(rabbitMqOptions));
 
 // Replace with actual RabbitMQ credentials
 builder.Services.AddScoped<ISagaRepository<PurchaseItemSaga>, InMemorySagaRepository<PurchaseItemSaga>>();

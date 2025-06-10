@@ -36,7 +36,7 @@ builder.Services.Configure<MongoDbSettings>(
 var rabbitMqOptions = builder.Configuration.GetSection("MessageBrokerOptions").Get<MessageBrokerOptions>();
 
 // Register IMessageBroker using the factory
-builder.Services.AddSingleton<IMessageBroker>(_ => RabbitMQFactory.Create(rabbitMqOptions));
+builder.Services.AddSingleton<IMessageBroker>(_ => RabbitMQFactory.CreateRabbitAMPQ(rabbitMqOptions));
 
 
 builder.Services.AddScoped<ICharacterSheetRepository, CharacterSheetRepository>();
