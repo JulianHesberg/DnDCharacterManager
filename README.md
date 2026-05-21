@@ -25,7 +25,3 @@ The application is split into multiple services:
 The project uses a microservice architecture with separated service boundaries. Each service is structured using layered/Clean Architecture-style separation:
 
 ```text
-Application
-Domain
-Infrastructure
-Presentation
